@@ -2,8 +2,6 @@
 
 Este é o repositório do **Segura Docs**, um sistema de documentação interativa para as soluções Segura. Ele permite que os usuários naveguem por documentos organizados em uma barra lateral, alternem entre idiomas e versões, e interajam com conteúdos dinâmicos, como callouts e tabelas de conteúdo (TOC).
 
----
-
 ## Funcionalidades
 
 - **Barra lateral interativa**:
@@ -26,8 +24,6 @@ Este é o repositório do **Segura Docs**, um sistema de documentação interati
 - **Suporte a múltiplos idiomas e versões**:
   - Alternância entre idiomas e versões diretamente na interface.
   - Carregamento dinâmico de documentos com base na seleção.
-
----
 
 ## Configuração
 
