@@ -1,13 +1,22 @@
-name: Deploy GitHub Pages
+name: Deploy Documentation
 
 on:
   push:
     branches:
       - main
+      - 'feature/**'
+      - 'staging/**'
+  pull_request:
+    types: [opened, synchronize]
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
+    
+    env:
+      # Define o nome do ambiente baseado na branch
+      ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'production' || format('staging-{0}', github.ref_name) }}
+    
     steps:
       - uses: actions/checkout@v3
       
@@ -15,17 +24,35 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '16'
-          
-      - name: Create package.json
+      
+      # Cria package.json se necessário ou usa um existente
+      - name: Setup project
         run: |
-          echo '{
-            "name": "meu-projeto",
-            "version": "1.0.0",
-            "dependencies": {
-              "dependencia1": "^1.0.0",
-              "dependencia2": "^2.0.0"
-            }
-          }' > package.json
-          
+          if [ ! -f "package.json" ]; then
+            echo '{
+              "name": "docs-system",
+              "version": "1.0.0",
+              "private": true,
+              "dependencies": {
+                "seu-pacote-de-doc": "^1.0.0"
+              },
+              "scripts": {
+                "build": "seu-comando-de-build",
+                "start": "seu-comando-de-start"
+              }
+            }' > package.json
+          fi
+      
       - name: Install dependencies
         run: npm install
+      
+      - name: Build documentation
+        run: npm run build
+      
+      # Deploy para diferentes ambientes baseado na branch
+      - name: Deploy to environment
+        uses: peaceiris/actions-gh-pages@v3  # Ou qualquer outro deployment
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+          destination_dir: ${{ env.ENVIRONMENT }}
