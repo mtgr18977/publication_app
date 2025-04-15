@@ -1,132 +1,5 @@
 [
   {
-    "name": ".git",
-    "type": "directory",
-    "children": [
-      {
-        "name": "hooks",
-        "type": "directory",
-        "children": [],
-        "path": ".git\\hooks"
-      },
-      {
-        "name": "info",
-        "type": "directory",
-        "children": [],
-        "path": ".git\\info"
-      },
-      {
-        "name": "logs",
-        "type": "directory",
-        "children": [
-          {
-            "name": "refs",
-            "type": "directory",
-            "children": [
-              {
-                "name": "heads",
-                "type": "directory",
-                "children": [],
-                "path": ".git\\logs\\refs\\heads"
-              },
-              {
-                "name": "remotes",
-                "type": "directory",
-                "children": [
-                  {
-                    "name": "origin",
-                    "type": "directory",
-                    "children": [],
-                    "path": ".git\\logs\\refs\\remotes\\origin"
-                  }
-                ],
-                "path": ".git\\logs\\refs\\remotes"
-              }
-            ],
-            "path": ".git\\logs\\refs"
-          }
-        ],
-        "path": ".git\\logs"
-      },
-      {
-        "name": "objects",
-        "type": "directory",
-        "children": [
-          {
-            "name": "57",
-            "type": "directory",
-            "children": [],
-            "path": ".git\\objects\\57"
-          },
-          {
-            "name": "85",
-            "type": "directory",
-            "children": [],
-            "path": ".git\\objects\\85"
-          },
-          {
-            "name": "c6",
-            "type": "directory",
-            "children": [],
-            "path": ".git\\objects\\c6"
-          },
-          {
-            "name": "df",
-            "type": "directory",
-            "children": [],
-            "path": ".git\\objects\\df"
-          },
-          {
-            "name": "info",
-            "type": "directory",
-            "children": [],
-            "path": ".git\\objects\\info"
-          },
-          {
-            "name": "pack",
-            "type": "directory",
-            "children": [],
-            "path": ".git\\objects\\pack"
-          }
-        ],
-        "path": ".git\\objects"
-      },
-      {
-        "name": "refs",
-        "type": "directory",
-        "children": [
-          {
-            "name": "heads",
-            "type": "directory",
-            "children": [],
-            "path": ".git\\refs\\heads"
-          },
-          {
-            "name": "remotes",
-            "type": "directory",
-            "children": [
-              {
-                "name": "origin",
-                "type": "directory",
-                "children": [],
-                "path": ".git\\refs\\remotes\\origin"
-              }
-            ],
-            "path": ".git\\refs\\remotes"
-          },
-          {
-            "name": "tags",
-            "type": "directory",
-            "children": [],
-            "path": ".git\\refs\\tags"
-          }
-        ],
-        "path": ".git\\refs"
-      }
-    ],
-    "path": ".git"
-  },
-  {
     "name": "332",
     "type": "directory",
     "children": [
@@ -4059,25 +3932,6 @@
               }
             ],
             "path": "332\\en\\Load Balancer"
-          },
-          {
-            "name": "Media",
-            "type": "directory",
-            "children": [
-              {
-                "name": "Files",
-                "type": "directory",
-                "children": [],
-                "path": "332\\en\\Media\\Files"
-              },
-              {
-                "name": "Images",
-                "type": "directory",
-                "children": [],
-                "path": "332\\en\\Media\\Images"
-              }
-            ],
-            "path": "332\\en\\Media"
           },
           {
             "name": "MySafe",
@@ -10891,25 +10745,6 @@
             "path": "332\\pt\\Load Balancer"
           },
           {
-            "name": "Media",
-            "type": "directory",
-            "children": [
-              {
-                "name": "Files",
-                "type": "directory",
-                "children": [],
-                "path": "332\\pt\\Media\\Files"
-              },
-              {
-                "name": "Images",
-                "type": "directory",
-                "children": [],
-                "path": "332\\pt\\Media\\Images"
-              }
-            ],
-            "path": "332\\pt\\Media"
-          },
-          {
             "name": "MySafe",
             "type": "directory",
             "children": [
@@ -13048,25 +12883,6 @@
               }
             ],
             "path": "333\\en\\First steps with senhasegura"
-          },
-          {
-            "name": "Media",
-            "type": "directory",
-            "children": [
-              {
-                "name": "Files",
-                "type": "directory",
-                "children": [],
-                "path": "333\\en\\Media\\Files"
-              },
-              {
-                "name": "Images",
-                "type": "directory",
-                "children": [],
-                "path": "333\\en\\Media\\Images"
-              }
-            ],
-            "path": "333\\en\\Media"
           },
           {
             "name": "Other information",
@@ -23368,25 +23184,6 @@
             "path": "333\\pt\\Configurações"
           },
           {
-            "name": "Media",
-            "type": "directory",
-            "children": [
-              {
-                "name": "Files",
-                "type": "directory",
-                "children": [],
-                "path": "333\\pt\\Media\\Files"
-              },
-              {
-                "name": "Images",
-                "type": "directory",
-                "children": [],
-                "path": "333\\pt\\Media\\Images"
-              }
-            ],
-            "path": "333\\pt\\Media"
-          },
-          {
             "name": "Other information",
             "type": "directory",
             "children": [
@@ -32168,25 +31965,6 @@
             "path": "4.0\\en\\Getting Started"
           },
           {
-            "name": "Media",
-            "type": "directory",
-            "children": [
-              {
-                "name": "Files",
-                "type": "directory",
-                "children": [],
-                "path": "4.0\\en\\Media\\Files"
-              },
-              {
-                "name": "Images",
-                "type": "directory",
-                "children": [],
-                "path": "4.0\\en\\Media\\Images"
-              }
-            ],
-            "path": "4.0\\en\\Media"
-          },
-          {
             "name": "News - v4.0",
             "type": "directory",
             "children": [
@@ -32390,12 +32168,6 @@
                       }
                     ],
                     "path": "4.0\\en\\Segura 360\\A2A\\Applications"
-                  },
-                  {
-                    "name": "Audit",
-                    "type": "directory",
-                    "children": [],
-                    "path": "4.0\\en\\Segura 360\\A2A\\Audit"
                   },
                   {
                     "name": "Authorizations",
@@ -33398,12 +33170,6 @@
                     "type": "directory",
                     "children": [
                       {
-                        "name": "General rule",
-                        "type": "directory",
-                        "children": [],
-                        "path": "4.0\\en\\Segura 360\\EPM Linux\\Access policies\\General rule"
-                      },
-                      {
                         "name": "go-endpoint-manager-linux-policies-user.md",
                         "type": "file",
                         "title": "New rule for user",
@@ -33577,12 +33343,6 @@
                 "path": "4.0\\en\\Segura 360\\EPM Linux"
               },
               {
-                "name": "EPM macOS",
-                "type": "directory",
-                "children": [],
-                "path": "4.0\\en\\Segura 360\\EPM macOS"
-              },
-              {
                 "name": "EPM Windows",
                 "type": "directory",
                 "children": [
@@ -33693,12 +33453,6 @@
                               }
                             ],
                             "path": "4.0\\en\\Segura 360\\EPM Windows\\EPM Windows Admin Interface\\EPM Rules and Policies Management\\How-to guides"
-                          },
-                          {
-                            "name": "Reference",
-                            "type": "directory",
-                            "children": [],
-                            "path": "4.0\\en\\Segura 360\\EPM Windows\\EPM Windows Admin Interface\\EPM Rules and Policies Management\\Reference"
                           }
                         ],
                         "path": "4.0\\en\\Segura 360\\EPM Windows\\EPM Windows Admin Interface\\EPM Rules and Policies Management"
@@ -33725,43 +33479,12 @@
                               }
                             ],
                             "path": "4.0\\en\\Segura 360\\EPM Windows\\EPM Windows Admin Interface\\Managing Users and Agents in EPM Windows\\How-to guides"
-                          },
-                          {
-                            "name": "Reference",
-                            "type": "directory",
-                            "children": [],
-                            "path": "4.0\\en\\Segura 360\\EPM Windows\\EPM Windows Admin Interface\\Managing Users and Agents in EPM Windows\\Reference"
                           }
                         ],
                         "path": "4.0\\en\\Segura 360\\EPM Windows\\EPM Windows Admin Interface\\Managing Users and Agents in EPM Windows"
                       }
                     ],
                     "path": "4.0\\en\\Segura 360\\EPM Windows\\EPM Windows Admin Interface"
-                  },
-                  {
-                    "name": "EPM Windows Agent",
-                    "type": "directory",
-                    "children": [
-                      {
-                        "name": "Automation",
-                        "type": "directory",
-                        "children": [],
-                        "path": "4.0\\en\\Segura 360\\EPM Windows\\EPM Windows Agent\\Automation"
-                      },
-                      {
-                        "name": "Core",
-                        "type": "directory",
-                        "children": [],
-                        "path": "4.0\\en\\Segura 360\\EPM Windows\\EPM Windows Agent\\Core"
-                      },
-                      {
-                        "name": "Vault",
-                        "type": "directory",
-                        "children": [],
-                        "path": "4.0\\en\\Segura 360\\EPM Windows\\EPM Windows Agent\\Vault"
-                      }
-                    ],
-                    "path": "4.0\\en\\Segura 360\\EPM Windows\\EPM Windows Agent"
                   },
                   {
                     "name": "EPM Windows Troubleshooting",
@@ -33987,12 +33710,6 @@
                     "path": "4.0\\en\\Segura 360\\Executions\\Management"
                   },
                   {
-                    "name": "Operations",
-                    "type": "directory",
-                    "children": [],
-                    "path": "4.0\\en\\Segura 360\\Executions\\Operations"
-                  },
-                  {
                     "name": "Operations automation",
                     "type": "directory",
                     "children": [
@@ -34132,12 +33849,6 @@
                       }
                     ],
                     "path": "4.0\\en\\Segura 360\\Executions\\Password operations"
-                  },
-                  {
-                    "name": "Templates",
-                    "type": "directory",
-                    "children": [],
-                    "path": "4.0\\en\\Segura 360\\Executions\\Templates"
                   },
                   {
                     "name": "Templates control",
@@ -35956,18 +35667,6 @@
                             "name": "Database Proxy for Oracle - Setup guide",
                             "type": "directory",
                             "children": [
-                              {
-                                "name": "Oracle Cluster Environment with grid infrastructure",
-                                "type": "directory",
-                                "children": [],
-                                "path": "4.0\\en\\Segura 360\\PAM Core\\Database Proxy\\How-to guides\\Database Proxy for Oracle - Setup guide\\Oracle Cluster Environment with grid infrastructure"
-                              },
-                              {
-                                "name": "Oracle Stand Alone Environment",
-                                "type": "directory",
-                                "children": [],
-                                "path": "4.0\\en\\Segura 360\\PAM Core\\Database Proxy\\How-to guides\\Database Proxy for Oracle - Setup guide\\Oracle Stand Alone Environment"
-                              },
                               {
                                 "name": "pam-session-how-to-collect-the-senhasegura-user-certificate.md",
                                 "type": "file",
@@ -41434,25 +41133,6 @@
             "path": "4.0\\pt\\Getting Started"
           },
           {
-            "name": "Media",
-            "type": "directory",
-            "children": [
-              {
-                "name": "Files",
-                "type": "directory",
-                "children": [],
-                "path": "4.0\\pt\\Media\\Files"
-              },
-              {
-                "name": "Images",
-                "type": "directory",
-                "children": [],
-                "path": "4.0\\pt\\Media\\Images"
-              }
-            ],
-            "path": "4.0\\pt\\Media"
-          },
-          {
             "name": "News - v4.0",
             "type": "directory",
             "children": [
@@ -41656,12 +41336,6 @@
                       }
                     ],
                     "path": "4.0\\pt\\Segura 360\\A2A\\Applications"
-                  },
-                  {
-                    "name": "Audit",
-                    "type": "directory",
-                    "children": [],
-                    "path": "4.0\\pt\\Segura 360\\A2A\\Audit"
                   },
                   {
                     "name": "Authorizations",
@@ -42670,12 +42344,6 @@
                     "type": "directory",
                     "children": [
                       {
-                        "name": "General rule",
-                        "type": "directory",
-                        "children": [],
-                        "path": "4.0\\pt\\Segura 360\\EPM Linux\\Access policies\\General rule"
-                      },
-                      {
                         "name": "go-endpoint-manager-linux-policies-user.md",
                         "type": "file",
                         "title": "Nova regra para usuário",
@@ -42843,12 +42511,6 @@
                 "path": "4.0\\pt\\Segura 360\\EPM Linux"
               },
               {
-                "name": "EPM macOS",
-                "type": "directory",
-                "children": [],
-                "path": "4.0\\pt\\Segura 360\\EPM macOS"
-              },
-              {
                 "name": "EPM Windows",
                 "type": "directory",
                 "children": [
@@ -42959,12 +42621,6 @@
                               }
                             ],
                             "path": "4.0\\pt\\Segura 360\\EPM Windows\\EPM Windows Admin Interface\\EPM Rules and Policies Management\\How-to guides"
-                          },
-                          {
-                            "name": "Reference",
-                            "type": "directory",
-                            "children": [],
-                            "path": "4.0\\pt\\Segura 360\\EPM Windows\\EPM Windows Admin Interface\\EPM Rules and Policies Management\\Reference"
                           }
                         ],
                         "path": "4.0\\pt\\Segura 360\\EPM Windows\\EPM Windows Admin Interface\\EPM Rules and Policies Management"
@@ -42991,43 +42647,12 @@
                               }
                             ],
                             "path": "4.0\\pt\\Segura 360\\EPM Windows\\EPM Windows Admin Interface\\Managing Users and Agents in EPM Windows\\How-to guides"
-                          },
-                          {
-                            "name": "Reference",
-                            "type": "directory",
-                            "children": [],
-                            "path": "4.0\\pt\\Segura 360\\EPM Windows\\EPM Windows Admin Interface\\Managing Users and Agents in EPM Windows\\Reference"
                           }
                         ],
                         "path": "4.0\\pt\\Segura 360\\EPM Windows\\EPM Windows Admin Interface\\Managing Users and Agents in EPM Windows"
                       }
                     ],
                     "path": "4.0\\pt\\Segura 360\\EPM Windows\\EPM Windows Admin Interface"
-                  },
-                  {
-                    "name": "EPM Windows Agent",
-                    "type": "directory",
-                    "children": [
-                      {
-                        "name": "Automation",
-                        "type": "directory",
-                        "children": [],
-                        "path": "4.0\\pt\\Segura 360\\EPM Windows\\EPM Windows Agent\\Automation"
-                      },
-                      {
-                        "name": "Core",
-                        "type": "directory",
-                        "children": [],
-                        "path": "4.0\\pt\\Segura 360\\EPM Windows\\EPM Windows Agent\\Core"
-                      },
-                      {
-                        "name": "Vault",
-                        "type": "directory",
-                        "children": [],
-                        "path": "4.0\\pt\\Segura 360\\EPM Windows\\EPM Windows Agent\\Vault"
-                      }
-                    ],
-                    "path": "4.0\\pt\\Segura 360\\EPM Windows\\EPM Windows Agent"
                   },
                   {
                     "name": "EPM Windows Troubleshooting",
@@ -43259,12 +42884,6 @@
                     "path": "4.0\\pt\\Segura 360\\Executions\\Management"
                   },
                   {
-                    "name": "Operations",
-                    "type": "directory",
-                    "children": [],
-                    "path": "4.0\\pt\\Segura 360\\Executions\\Operations"
-                  },
-                  {
                     "name": "Operations automation",
                     "type": "directory",
                     "children": [
@@ -43404,12 +43023,6 @@
                       }
                     ],
                     "path": "4.0\\pt\\Segura 360\\Executions\\Password operations"
-                  },
-                  {
-                    "name": "Templates",
-                    "type": "directory",
-                    "children": [],
-                    "path": "4.0\\pt\\Segura 360\\Executions\\Templates"
                   },
                   {
                     "name": "Templates control",
@@ -45228,18 +44841,6 @@
                             "name": "Database Proxy for Oracle - Setup guide",
                             "type": "directory",
                             "children": [
-                              {
-                                "name": "Oracle Cluster Environment with grid infrastructure",
-                                "type": "directory",
-                                "children": [],
-                                "path": "4.0\\pt\\Segura 360\\PAM Core\\Database Proxy\\How-to guides\\Database Proxy for Oracle - Setup guide\\Oracle Cluster Environment with grid infrastructure"
-                              },
-                              {
-                                "name": "Oracle Stand Alone Environment",
-                                "type": "directory",
-                                "children": [],
-                                "path": "4.0\\pt\\Segura 360\\PAM Core\\Database Proxy\\How-to guides\\Database Proxy for Oracle - Setup guide\\Oracle Stand Alone Environment"
-                              },
                               {
                                 "name": "pam-session-how-to-collect-the-senhasegura-user-certificate.md",
                                 "type": "file",
@@ -49830,11 +49431,5 @@
       }
     ],
     "path": "4.0"
-  },
-  {
-    "name": "api-specs",
-    "type": "directory",
-    "children": [],
-    "path": "api-specs"
   }
 ]
