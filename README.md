@@ -43,6 +43,10 @@ Este é o repositório do **Segura Docs**, um sistema de documentação interati
 3. Inicie um servidor local para servir os arquivos estáticos. Por exemplo: `npx serve` ou `npx live-server`
 4. Acesse o sistema de documentação no navegador: `http://127.0.0.1:5500`
 
+## Diagrama de fluxo da documentação (staging, escrita, commit, desenvolvimento).
+
+![](https://github.com/gpilottiduarte/docs-as-code/blob/main/docascode.svg)
+
 ## Personalização
 ### Estrutura da Barra Lateral
 A estrutura da barra lateral é definida no arquivo `structure.json`. 
