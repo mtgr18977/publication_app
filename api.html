@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Segura API Reference</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- ReDoc Styles -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .api-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 70px);
+        }
+        
+        redoc {
+            display: block;
+            height: 100%;
+            width: 100%;
+            overflow: auto;
+        }
+        
+        /* Customização para ReDoc */
+        :root {
+            --redoc-font-regular: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --primary-color: #00B29A;
+            --text-color: #003330;
+            --secondary-color: #00766C;
+        }
+        
+        .back-to-docs {
+            margin-left: auto;
+        }
+        
+        /* Versões dropdown específico para a página de API */
+        #apiVersionSelect {
+            min-width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="company-name">Segura API</div>
+            <div class="dropdowns-container">
+                <select id="apiVersionSelect" class="dropdown">
+                    <option value="v1">v1.0</option>
+                    <option value="v2">v2.0</option>
+                    <option value="v3">v3.0</option>
+                    <option value="v4" selected>v4.0</option>
+                </select>
+                <a href="index.html" class="api-btn back-to-docs">Documentação</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="api-container">
+        <redoc spec-url="api-specs/v4.yaml"></redoc>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionSelect = document.getElementById('apiVersionSelect');
+            
+            // Obter a versão dos parâmetros da URL ou usar a padrão
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentVersion = urlParams.get('version') || 'v4';
+            versionSelect.value = currentVersion;
+            
+            // Atualizar a especificação da API quando a versão mudar
+            versionSelect.addEventListener('change', (e) => {
+                const newVersion = e.target.value;
+                
+                // Atualizar URL com o parâmetro de versão
+                const newUrl = new URL(window.location.href);
+                newUrl.searchParams.set('version', newVersion);
+                window.history.pushState({}, '', newUrl);
+                
+                // Recarregar a página com a nova versão da especificação
+                const redocElement = document.querySelector('redoc');
+                redocElement.setAttribute('spec-url', `api-specs/${newVersion}.yaml`);
+                redocElement.dispatchEvent(new CustomEvent('reload'));
+            });
+            
+            // Definir a URL inicial da especificação
+            document.querySelector('redoc').setAttribute('spec-url', `api-specs/${currentVersion}.yaml`);
+        });
+    </script>
+</body>
+</html>
