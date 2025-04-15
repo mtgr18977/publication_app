@@ -94,7 +94,7 @@ Para mais detalhes, visite o documento [Virtual appliances](/v4/docs/pt/installa
 ### **Etapas de instalação** 
 Para iniciar a instalação, siga estas etapas:
 
-1. **Defina sua arquitetura:** use os documentos [Alta Disponibilidade (HA) e Recuperação de Desastres (DR)](/v4/docs/pt/installation-architecture-high-availability-and-disaster-recovery) e [Arquiteturas suportadas](/v4/docs/pt/installation-supported-architectures) para determinar a arquitetura mais adequada para sua implantação do Segura.  
+1. **Defina sua arquitetura:** use os documentos [Alta Disponibilidade (HA) e Recuperação de Desastres (DR)](/4.0/pt/installation-architecture-high-availability-and-disaster-recovery) e [Arquiteturas suportadas](/v4/docs/pt/installation-supported-architectures) para determinar a arquitetura mais adequada para sua implantação do Segura.  
 2. **Regras de firewall**: com base na arquitetura selecionada, crie as [regras de firewall](/v4/docs/pt/installation-firewall-rules) necessárias.  
 3. **Acesse os guias de instalação:** instruções passo-a-passo detalhadas para instalar o Segura em vários sistemas operacionais podem ser encontradas em [na documentação de instalação do Segura.](/v4/docs/pt/installation)  
 4. **Verificação:** verifique a instalação acessando o Segura usando seu endereço no navegador. Certifique-se de que todos os serviços estejam sendo executados corretamente e que você possa fazer login com a conta de administrador.
