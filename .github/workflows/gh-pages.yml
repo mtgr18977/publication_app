@@ -30,15 +30,15 @@ jobs:
         run: |
           if [ ! -f "package.json" ]; then
             echo '{
-              "name": "docs-system",
+              "name": "DocsCria",
               "version": "1.0.0",
               "private": true,
               "dependencies": {
                 "seu-pacote-de-doc": "^1.0.0"
               },
               "scripts": {
-                "build": "seu-comando-de-build",
-                "start": "seu-comando-de-start"
+                "build": "npm run build",
+                "start": "npm run start"
               }
             }' > package.json
           fi
