@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -32,7 +34,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./  # a raiz do repositório
+          publish_dir: ./docs  # ou o diretório que você está usando
           destination_dir: ./  # publica na raiz de gh-pages
           exclude_assets: '.github,node_modules,.gitignore,.git,package*.json'
 
@@ -81,7 +83,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./  # a raiz do repositório
+          publish_dir: ./docs  # ou o diretório que você está usando
           destination_dir: previews/${{ env.PREVIEW_ID }}
           exclude_assets: '.github,node_modules,.gitignore,.git,package*.json'
       
