@@ -12,6 +12,17 @@
     <nav class="navbar">
         <div class="navbar-content">
             <a href="index.html" class="company-name">Segura Docs</a>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Buscar na documentação...">
+                <div id="searchModal" class="search-modal">
+                    <div class="search-modal-header">
+                        <h2>Resultados da Busca</h2>
+                        <span id="searchResultsCount" class="search-results-count">0 resultados</span>
+                        <button class="close-search-modal">&times;</button>
+                    </div>
+                    <div id="searchResults" class="search-results"></div>
+                </div>
+            </div>
             <div class="dropdowns-container">
                 <select id="versionSelect" class="dropdown"></select>
                 <select id="languageSelect" class="dropdown"></select>

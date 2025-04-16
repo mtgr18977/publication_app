@@ -3,6 +3,258 @@ let currentLanguage = localStorage.getItem('docLanguage') || 'pt';
 let structure = [];
 let currentPath = null;
 let currentFile = null;
+let searchIndex = {}; // Índice de busca
+let searchDebounceTimer = null;
+let isPreloading = false;
+
+// Função para pré-carregar o conteúdo de todos os documentos
+async function preloadContent() {
+    if (isPreloading) {
+        console.log('Pré-carregamento já em andamento...');
+        return;
+    }
+
+    isPreloading = true;
+    console.log('Iniciando pré-carregamento de conteúdo...');
+    
+    try {
+        const version = structure.find(v => v.name === currentVersion);
+        if (!version) {
+            console.error('Versão não encontrada:', currentVersion);
+            return;
+        }
+
+        const language = version.children.find(l => l.name === currentLanguage);
+        if (!language) {
+            console.error('Idioma não encontrado:', currentLanguage);
+            return;
+        }
+
+        // Função recursiva para processar todos os arquivos
+        async function processItems(items) {
+            for (const item of items) {
+                if (item.type === 'directory') {
+                    await processItems(item.children);
+                } else if (item.type === 'file' && item.path.endsWith('.md')) {
+                    try {
+                        console.log('Carregando arquivo:', item.path);
+                        const response = await fetch(item.path);
+                        if (!response.ok) {
+                            console.error('Erro ao carregar arquivo:', item.path, response.status);
+                            continue;
+                        }
+                        
+                        const content = await response.text();
+                        // Adiciona ao índice de busca
+                        searchIndex[item.path] = {
+                            title: item.title || item.name.replace('.md', ''),
+                            content: content,
+                            path: item.path
+                        };
+                        console.log('Arquivo carregado com sucesso:', item.path);
+                    } catch (error) {
+                        console.error(`Erro ao carregar ${item.path}:`, error);
+                    }
+                }
+            }
+        }
+
+        await processItems(language.children);
+        console.log('Pré-carregamento concluído. Total de arquivos:', Object.keys(searchIndex).length);
+        
+        // Atualiza o placeholder da busca para indicar que está pronto
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.placeholder = 'Buscar na documentação...';
+        }
+    } catch (error) {
+        console.error('Erro durante o pré-carregamento:', error);
+    } finally {
+        isPreloading = false;
+    }
+}
+
+// Função para realizar a busca
+function performSearch(query) {
+    if (!query || query.length < 2) {
+        hideSearchModal();
+        return;
+    }
+
+    const results = [];
+    const searchTerms = query.toLowerCase().split(' ').filter(term => term.length > 0);
+
+    // Verifica se o índice está vazio
+    if (Object.keys(searchIndex).length === 0) {
+        console.log('Índice de busca vazio. Tentando pré-carregar...');
+        preloadContent();
+        return;
+    }
+
+    for (const [path, doc] of Object.entries(searchIndex)) {
+        const content = doc.content.toLowerCase();
+        const title = doc.title.toLowerCase();
+        
+        // Verifica se todos os termos de busca estão presentes
+        const hasAllTerms = searchTerms.every(term => 
+            content.includes(term) || title.includes(term)
+        );
+
+        if (hasAllTerms) {
+            // Encontra o primeiro trecho relevante
+            let snippet = '';
+            for (const term of searchTerms) {
+                const termIndex = content.indexOf(term);
+                if (termIndex !== -1) {
+                    const start = Math.max(0, termIndex - 50);
+                    const end = Math.min(content.length, termIndex + 50);
+                    snippet = content.substring(start, end);
+                    break;
+                }
+            }
+
+            results.push({
+                title: doc.title,
+                path: doc.path,
+                snippet: snippet
+            });
+        }
+    }
+
+    displaySearchResults(results, query);
+}
+
+// Função para exibir os resultados da busca
+function displaySearchResults(results, query) {
+    const resultsContainer = document.getElementById('searchResults');
+    const resultsCount = document.getElementById('searchResultsCount');
+    if (!resultsContainer || !resultsCount) {
+        console.error('Elementos de busca não encontrados');
+        return;
+    }
+    
+    resultsContainer.innerHTML = '';
+    resultsCount.textContent = `${results.length} resultado${results.length !== 1 ? 's' : ''}`;
+
+    if (results.length === 0) {
+        resultsContainer.innerHTML = `
+            <div class="search-result-item">
+                <h3>Nenhum resultado encontrado</h3>
+                <p class="snippet-container">Tente usar termos diferentes ou mais específicos.</p>
+            </div>
+        `;
+    } else {
+        results.forEach(result => {
+            const item = document.createElement('div');
+            item.className = 'search-result-item';
+            
+            // Destaca os termos de busca no snippet
+            let highlightedSnippet = result.snippet;
+            query.split(' ').forEach(term => {
+                if (term.length > 0) {
+                    const regex = new RegExp(term, 'gi');
+                    highlightedSnippet = highlightedSnippet.replace(regex, match => 
+                        `<span class="highlight">${match}</span>`
+                    );
+                }
+            });
+
+            // Extrai o caminho do arquivo para mostrar a hierarquia
+            const pathParts = result.path.split('/');
+            const version = pathParts[0];
+            const language = pathParts[1];
+            const filePath = pathParts.slice(2).join(' > ');
+
+            item.innerHTML = `
+                <h3>
+                    ${result.title}
+                    <span class="result-path">${filePath}</span>
+                </h3>
+                <div class="snippet-container">
+                    ...${highlightedSnippet}...
+                </div>
+                <div class="result-meta">
+                    <span>Versão: ${version}</span>
+                    <span>Idioma: ${language}</span>
+                </div>
+            `;
+
+            item.addEventListener('click', () => {
+                loadContent(result.path);
+                hideSearchModal();
+            });
+
+            resultsContainer.appendChild(item);
+        });
+    }
+
+    showSearchModal();
+}
+
+function showSearchModal() {
+    const modal = document.getElementById('searchModal');
+    const overlay = document.getElementById('searchModalOverlay');
+    
+    if (overlay) {
+        overlay.classList.add('active');
+    }
+    modal.classList.add('active');
+
+    // Fecha o modal ao clicar no overlay
+    if (overlay) {
+        overlay.addEventListener('click', hideSearchModal);
+    }
+
+    // Fecha o modal ao pressionar ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            hideSearchModal();
+        }
+    });
+}
+
+function hideSearchModal() {
+    const modal = document.getElementById('searchModal');
+    const overlay = document.getElementById('searchModalOverlay');
+    
+    if (modal) modal.classList.remove('active');
+    if (overlay) overlay.classList.remove('active');
+}
+
+// Inicializa a busca
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('searchInput');
+    const closeButton = document.querySelector('.close-search-modal');
+    
+    if (!searchInput) {
+        console.error('Elemento searchInput não encontrado');
+        return;
+    }
+    
+    // Configura o evento de input
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(() => {
+            performSearch(e.target.value);
+        }, 300);
+    });
+
+    // Fecha o modal ao clicar no botão de fechar
+    if (closeButton) {
+        closeButton.addEventListener('click', hideSearchModal);
+    }
+
+    // Inicia o pré-carregamento após carregar a estrutura
+    fetch('structure.json')
+        .then(response => response.json())
+        .then(data => {
+            structure = data;
+            initDropdowns();
+            updateSidebar();
+            preloadContent();
+        })
+        .catch(error => console.error('Error loading structure:', error));
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     // Configurar o evento de clique do logo da empresa - antes de qualquer outra coisa
@@ -94,6 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     loadIndexContent(); // Carregar senhasegura.md como conteúdo padrão
                 }
             }
+            preloadContent(); // Inicia o pré-carregamento
         })
         .catch(error => console.error('Error loading structure:', error));
 });

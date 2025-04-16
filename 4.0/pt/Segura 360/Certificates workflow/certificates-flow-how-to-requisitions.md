@@ -47,9 +47,11 @@ Para importar uma requisição, siga estes passos:
 3. No canto superior direito, clique em **Exibir ações** (o ícone dos três pontos verticais).
 4. Selecione **Importar request** isso abrirá o formulário **Importar request**.
 5. Escolha o **Arquivo .csr** e o **Arquivo .key** da sua máquina.
-:::(Info) (Info)
+
+:::(info) (Info)
 Embora não seja obrigatório, recomendamos adicionar a **Senha da key** e a **Senha de revogação**. Essas senhas protegem as informações e aumentam a segurança do processo.
 :::
+
 6. Em **Algoritmo de assinatura do certificado**, selecione o algoritmo que será usado para assinar o certificado através da autoridade certificadora.
 7. Em **Tipo de certificado**, selecione tipo de certificado que deseja obter.
 8. Em **Tipo de domínio**, marque a opção desejada.
