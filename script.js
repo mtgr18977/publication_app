@@ -6,6 +6,7 @@ let currentFile = null;
 let searchIndex = {}; // Índice de busca
 let searchDebounceTimer = null;
 let isPreloading = false;
+let dropdownsInitialized = false;
 
 // Função para pré-carregar o conteúdo de todos os documentos
 async function preloadContent() {
@@ -257,13 +258,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Configurar o evento de clique do logo da empresa - antes de qualquer outra coisa
+    // Configurar o evento de clique do logo da empresa
     const companyLogo = document.getElementById('companyLogo');
     if (companyLogo) {
         companyLogo.style.cursor = 'pointer';
         companyLogo.onclick = function(e) {
             e.preventDefault();
-            window.location.href = window.location.pathname; // Recarrega a página de forma limpa
+            e.stopPropagation();
+            loadIndexContent();
+            return false;
         };
     }
     
@@ -320,6 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             structure = data;
             initDropdowns();
+            
             // Forçar versão 4.0 e pt se não existir configuração salva
             if (!localStorage.getItem('docVersion')) {
                 currentVersion = '4.0';
@@ -331,56 +335,67 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             updateSidebar();
+            
             // Verificar se há um artigo na URL
             const urlParams = new URLSearchParams(window.location.search);
             const articlePath = urlParams.get('article');
+            
             if (articlePath) {
-                loadContent(articlePath); // Carregar o artigo da URL
-                highlightCurrentFile(); // Destacar o arquivo atual na sidebar
+                loadContent(articlePath);
             } else {
-                const savedPath = localStorage.getItem('currentPath');
-                if (savedPath && savedPath !== 'senhasegura.md') {
-                    loadContent(savedPath); // Carregar o arquivo salvo
-                    highlightCurrentFile(); // Destacar o arquivo atual na sidebar
-                } else {
-                    loadIndexContent(); // Carregar senhasegura.md como conteúdo padrão
-                }
+                // Sempre carregar a página inicial se não houver artigo na URL
+                loadIndexContent();
             }
-            preloadContent(); // Inicia o pré-carregamento
+            
+            preloadContent();
         })
         .catch(error => console.error('Error loading structure:', error));
 });
 
 function initDropdowns() {
+    // Se os dropdowns já foram inicializados, não faça nada
+    if (dropdownsInitialized) {
+        return;
+    }
+    
     const versionSelect = document.getElementById('versionSelect');
     const languageSelect = document.getElementById('languageSelect');
+    
     // Popular versões
     const versions = structure.filter(item => item.type === 'directory');
     versions.forEach(version => {
         const option = new Option(version.name, version.name);
         versionSelect.add(option);
     });
+    
     // Popular idiomas
     ['en', 'pt'].forEach(lang => {
         const option = new Option(lang.toUpperCase(), lang);
         languageSelect.add(option);
     });
+    
     // Definir valores padrão
     versionSelect.value = currentVersion;
     languageSelect.value = currentLanguage;
+    
     // Salvar preferências ao mudar
     versionSelect.addEventListener('change', (e) => {
         currentVersion = e.target.value;
         localStorage.setItem('docVersion', currentVersion);
         updateSidebarAndKeepPosition();
     });
+    
     languageSelect.addEventListener('change', (e) => {
         currentLanguage = e.target.value;
         localStorage.setItem('docLanguage', currentLanguage);
         loadCurrentDocumentInNewLanguage(); // Carregar o mesmo documento no novo idioma
         updateSidebarAndKeepPosition(); // Atualizar a barra lateral
     });
+    
+    // Marcar como inicializado
+    dropdownsInitialized = true;
 }
+
 function updateSidebar() {
     const sidebar = document.getElementById('sidebar-content');
     sidebar.innerHTML = '';
@@ -682,7 +697,7 @@ function forceSidebarCollapse() {
       
       console.log("Barra lateral colapsada com sucesso");
     }, 200); // Um timeout significativo para garantir que isso aconteça por último
-  }
+}
 
 function loadIndexContent() {
     // Caminho para o arquivo senhasegura.md baseado na versão e idioma atuais
@@ -691,60 +706,15 @@ function loadIndexContent() {
     // Importante: salvar este caminho no localStorage
     localStorage.setItem('currentPath', senhaseguraPath);
     
-    fetch(senhaseguraPath)
-        .then(response => {
-            if (!response.ok) throw new Error('File not found');
-            return response.text();
-        })
-        .then(markdown => {
-            // Pré-processar o Markdown para lidar com os callouts
-            const processedMarkdown = preProcessCallouts(markdown);
-            
-            // Renderizar com o Marked
-            const htmlContent = marked.parse(processedMarkdown);
-            
-            document.getElementById('content').innerHTML = `
-                <div class="content-container">
-                    ${htmlContent}
-                </div>
-            `;
-            
-            // Gerar TOC após carregar o conteúdo
-            generateTOC();
-            // Adicionar IDs aos headings
-            addHeadingIDs();
-            // Ativar scroll spy
-            setupScrollSpy();
-            
-            // Atualizar a referência ao arquivo atual
-            currentPath = senhaseguraPath;
-            currentFile = 'senhasegura.md';
-            
-            // Destacar apenas o senhasegura.md na barra lateral
-            setTimeout(() => {
-                highlightSenhaseguraInSidebar();
-            }, 50);
-            
-            // Atualizar a URL no navegador para indicar que estamos na página inicial
-            const newUrl = `${window.location.origin}${window.location.pathname}`;
-            history.replaceState(null, '', newUrl);
-        })
-        .catch(error => {
-            console.error('Error loading senhasegura content:', error);
-            // Fallback para uma mensagem de boas-vindas genérica se o arquivo não existir
-            document.getElementById('content').innerHTML = `
-                <div class="content-container">
-                    <h1>${currentLanguage === 'pt' ? 'Bem-vindo à Segura' : 'Welcome to Segura'}</h1>
-                    <p>${currentLanguage === 'pt' 
-                        ? 'Selecione um arquivo na barra lateral para começar.' 
-                        : 'Please select a file from the sidebar to get started.'}</p>
-                </div>
-            `;
-            
-            // Resetar as variáveis de controle
-            currentPath = null;
-            currentFile = null;
-        });
+    // Forçar o carregamento do conteúdo
+    loadContent(senhaseguraPath);
+    
+    // Forçar o colapso da barra lateral
+    forceSidebarCollapse();
+    
+    // Atualizar a URL no navegador para indicar que estamos na página inicial
+    const newUrl = `${window.location.origin}${window.location.pathname}`;
+    history.replaceState(null, '', newUrl);
 }
 
 // Gerar TOC dinâmica
