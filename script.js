@@ -415,8 +415,34 @@ function updateSidebarAndKeepPosition() {
     if (!language) return;
     buildSidebarTree(language.children, sidebar);
     
-    // Forçar o colapso da barra lateral
-    forceSidebarCollapse();
+    // Após recriar a barra lateral, destaque o arquivo atual
+    setTimeout(() => {
+        if (currentPath) {
+            highlightCurrentFile();
+        } else {
+            // Se não houver arquivo atual, destaque o senhasegura.md
+            const senhaseguraPath = `${currentVersion}/${currentLanguage}/senhasegura.md`;
+            document.querySelectorAll('.sidebar-item.file').forEach(el => {
+                const path = el.getAttribute('data-path');
+                if (path === senhaseguraPath) {
+                    el.classList.add('active');
+                    // Abrir apenas as pastas pai necessárias
+                    let parent = el.parentElement;
+                    while (parent && !parent.classList.contains('sidebar')) {
+                        if (parent.classList.contains('children-container')) {
+                            parent.style.display = 'block';
+                            const folderElement = parent.previousElementSibling;
+                            if (folderElement && folderElement.classList.contains('sidebar-folder')) {
+                                folderElement.classList.add('open');
+                                folderElement.querySelector('.folder-icon').textContent = '▾';
+                            }
+                        }
+                        parent = parent.parentElement;
+                    }
+                }
+            });
+        }
+    }, 50);
 }
 
 function buildSidebarTree(items, parent) {
@@ -609,15 +635,37 @@ function loadCurrentDocumentInNewLanguage() {
         })
         .then(validPath => {
             loadContent(validPath); // Carregar o arquivo no novo idioma
-            // Forçar o colapso da barra lateral após carregar o conteúdo
-            forceSidebarCollapse();
+            // Destacar o arquivo atual após carregar o conteúdo
+            setTimeout(() => {
+                highlightCurrentFile();
+            }, 50);
         })
         .catch(() => {
             console.warn('Arquivo não encontrado no novo idioma. Carregando página inicial.');
             const senhaseguraPath = `${currentVersion}/${currentLanguage}/senhasegura.md`;
             loadContent(senhaseguraPath);
-            // Forçar o colapso da barra lateral após carregar a página inicial
-            forceSidebarCollapse();
+            // Destacar o senhasegura.md após carregar a página inicial
+            setTimeout(() => {
+                document.querySelectorAll('.sidebar-item.file').forEach(el => {
+                    const path = el.getAttribute('data-path');
+                    if (path === senhaseguraPath) {
+                        el.classList.add('active');
+                        // Abrir apenas as pastas pai necessárias
+                        let parent = el.parentElement;
+                        while (parent && !parent.classList.contains('sidebar')) {
+                            if (parent.classList.contains('children-container')) {
+                                parent.style.display = 'block';
+                                const folderElement = parent.previousElementSibling;
+                                if (folderElement && folderElement.classList.contains('sidebar-folder')) {
+                                    folderElement.classList.add('open');
+                                    folderElement.querySelector('.folder-icon').textContent = '▾';
+                                }
+                            }
+                            parent = parent.parentElement;
+                        }
+                    }
+                });
+            }, 50);
         });
 }
 
@@ -646,16 +694,33 @@ function forceSidebarCollapse() {
         item.classList.remove('active');
       });
       
-      // 3. Se estamos visualizando senhasegura.md, encontre-o e destaque apenas ele
-      if (currentFile === 'senhasegura.md') {
-        const items = document.querySelectorAll('.sidebar-item.file');
-        items.forEach(item => {
-          const path = item.getAttribute('data-path');
-          if (path && path.endsWith('senhasegura.md')) {
-            item.classList.add('active');
+      // 3. Encontrar e destacar o arquivo atual
+      const currentFilePath = currentPath || `${currentVersion}/${currentLanguage}/senhasegura.md`;
+      const items = document.querySelectorAll('.sidebar-item.file');
+      
+      items.forEach(item => {
+        const path = item.getAttribute('data-path');
+        if (path === currentFilePath) {
+          // Destacar o arquivo
+          item.classList.add('active');
+          
+          // Abrir apenas as pastas pai necessárias
+          let parent = item.parentElement;
+          while (parent && !parent.classList.contains('sidebar')) {
+            if (parent.classList.contains('children-container')) {
+              parent.style.display = 'block';
+              
+              const folderElement = parent.previousElementSibling;
+              if (folderElement && folderElement.classList.contains('sidebar-folder')) {
+                folderElement.classList.add('open');
+                const icon = folderElement.querySelector('.folder-icon');
+                if (icon) icon.textContent = '▾';
+              }
+            }
+            parent = parent.parentElement;
           }
-        });
-      }
+        }
+      });
       
       console.log("Barra lateral colapsada com sucesso");
     }, 200); // Um timeout significativo para garantir que isso aconteça por último
