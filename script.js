@@ -415,50 +415,8 @@ function updateSidebarAndKeepPosition() {
     if (!language) return;
     buildSidebarTree(language.children, sidebar);
     
-    // Após recriar a barra lateral, carregue o conteúdo apropriado
-    // mas não tente preservar as pastas abertas
-    setTimeout(() => {
-        if (currentFile === 'senhasegura.md') {
-            // Se estávamos na página inicial, carregue-a novamente
-            const senhaseguraPath = `${currentVersion}/${currentLanguage}/senhasegura.md`;
-            loadContent(senhaseguraPath);
-            // Destacar apenas o senhasegura.md na barra lateral sem expandir tudo
-            document.querySelectorAll('.sidebar-item.file').forEach(el => {
-                const filePath = el.getAttribute('data-path');
-                if (filePath && filePath.endsWith('senhasegura.md')) {
-                    el.classList.add('active');
-                    // Abra apenas as pastas pai necessárias
-                    let parent = el.parentElement;
-                    while (parent && !parent.classList.contains('sidebar')) {
-                        if (parent.classList.contains('children-container')) {
-                            parent.style.display = 'block';
-                            const folderElement = parent.previousElementSibling;
-                            if (folderElement && folderElement.classList.contains('sidebar-folder')) {
-                                folderElement.classList.add('open');
-                                folderElement.querySelector('.folder-icon').textContent = '▾';
-                            }
-                        }
-                        parent = parent.parentElement;
-                    }
-                }
-            });
-        } else if (currentFile) {
-            // Se estávamos em outro documento, tente carregá-lo no novo idioma/versão
-            loadCurrentDocumentInNewLanguage();
-            highlightCurrentFile();
-        } else {
-            // Caso contrário, carregue a página inicial
-            const senhaseguraPath = `${currentVersion}/${currentLanguage}/senhasegura.md`;
-            loadContent(senhaseguraPath);
-            // E destaque-a na barra lateral
-            document.querySelectorAll('.sidebar-item.file').forEach(el => {
-                const filePath = el.getAttribute('data-path');
-                if (filePath && filePath.endsWith('senhasegura.md')) {
-                    el.classList.add('active');
-                }
-            });
-        }
-    }, 50);
+    // Forçar o colapso da barra lateral
+    forceSidebarCollapse();
 }
 
 function buildSidebarTree(items, parent) {
@@ -651,11 +609,15 @@ function loadCurrentDocumentInNewLanguage() {
         })
         .then(validPath => {
             loadContent(validPath); // Carregar o arquivo no novo idioma
+            // Forçar o colapso da barra lateral após carregar o conteúdo
+            forceSidebarCollapse();
         })
         .catch(() => {
             console.warn('Arquivo não encontrado no novo idioma. Carregando página inicial.');
             const senhaseguraPath = `${currentVersion}/${currentLanguage}/senhasegura.md`;
             loadContent(senhaseguraPath);
+            // Forçar o colapso da barra lateral após carregar a página inicial
+            forceSidebarCollapse();
         });
 }
 
