@@ -1,2 +1,0 @@
-# POST | Atualizar dispositivo
-

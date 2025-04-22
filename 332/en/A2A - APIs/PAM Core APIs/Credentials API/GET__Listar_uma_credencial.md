@@ -1,2 +1,0 @@
-# GET | Listar uma credencial
-

@@ -1,2 +1,0 @@
-# Response codes and troubleshooting
-

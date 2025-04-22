@@ -1,2 +1,0 @@
-# DEL | Inativar dispositivo
-
