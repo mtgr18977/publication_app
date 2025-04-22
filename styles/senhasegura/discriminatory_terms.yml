@@ -1,8 +1,0 @@
-extends: substitution
-message: "Use linguagem inclusiva. Considere: '%s'"
-level: error
-ignorecase: true
-swap:
-  ele: "a pessoa usuária"
-  usuário: "pessoa usuária"
-  desenvolvedor: "pessoa desenvolvedora"
