@@ -1,6 +1,7 @@
-# Segura Docs
-
-Este é o repositório do **Segura Docs**, um sistema de documentação interativa para as soluções Segura. Ele permite que os usuários naveguem por documentos organizados em uma barra lateral, alternem entre idiomas e versões, e interajam com conteúdos dinâmicos, como callouts e tabelas de conteúdo (TOC).
+# Plataforma de documentação técnica
+Este é o repostório da minha plataforma sem nome (ainda) para publicação de documentação técnica.
+Essa plataforma é um sistema de documentação interativa para a documentação de produtos. 
+Ela permite que os usuários naveguem por documentos organizados em uma barra lateral, alternem entre idiomas e versões, e interajam com conteúdos dinâmicos, como callouts e tabelas de conteúdo (TOC).
 
 ## Funcionalidades
 
