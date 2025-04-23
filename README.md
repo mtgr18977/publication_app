@@ -1,7 +1,7 @@
 # Plataforma Sem Nome 📄✨ (Sua Plataforma de Documentação Dinâmica)
 
 <p align="center">
-  <img src="images/ChatGPT Image 23 de abr. de 2025, 11_09_29.png" alt="Plataforma Sem Nome Logo" width="300"/>
+  <img src="images/logo.png" alt="Plataforma Sem Nome Logo" width="300"/>
   </p>
 
 <p align="center">
@@ -20,16 +20,16 @@ A **Plataforma Sem Nome** transforma o processo de documentação, permitindo qu
 
 ## ✨ Funcionalidades Principais
 
-* **Navegação Intuitiva:** Sidebar interativa gerada automaticamente a partir da estrutura de pastas, com destaque para o arquivo ativo e suporte a múltiplos níveis.
-* **Conteúdo Rico com Markdown:** Suporte completo a Markdown, processado dinamicamente no cliente com a biblioteca [Marked.js](https://marked.js.org/).
-* **Callouts Estilizados:** Destaque informações importantes, avisos ou erros usando uma sintaxe simples no Markdown (`:::info (Título) ... :::`) que é automaticamente renderizada com estilos customizáveis.
-* **Tabela de Conteúdo (TOC) Dinâmica:** Geração automática de TOC baseada nos cabeçalhos (H1, H2, H3) do documento atual, com scroll spy para indicar a seção ativa.
-* **Seleção de Versão e Idioma:** Permite aos usuários alternar facilmente entre diferentes versões e idiomas da documentação, carregando o conteúdo correspondente.
-* **Busca Integrada:** Funcionalidade de busca em tempo real (com debounce) no conteúdo pré-carregado da versão/idioma selecionado.
-* **Referência de API:** Página dedicada para exibir especificações OpenAPI (Swagger) usando [Redoc](https://github.com/Redocly/redoc).
-* **Feedback do Usuário:** Botões de "like/dislike" com modal para coletar feedback sobre a utilidade das páginas.
-* **Design Responsivo:** Interface adaptável para diferentes tamanhos de tela.
-* **"Documentation as Code":** Baseado em arquivos estáticos (HTML, CSS, JS, Markdown) e versionamento Git, facilitando a colaboração e a integração com CI/CD.
+* **Navegação intuitiva:** sidebar interativa gerada automaticamente a partir da estrutura de pastas, com destaque para o arquivo ativo e suporte a múltiplos níveis.
+* **Conteúdo rico com markdown:** suporte completo a Markdown, processado dinamicamente no cliente com a biblioteca [Marked.js](https://marked.js.org/).
+* **Callouts estilizados:** destaque informações importantes, avisos ou erros usando uma sintaxe simples no Markdown (`:::(info) (Título) ... :::`) que é automaticamente renderizada com estilos customizáveis.
+* **Tabela de Conteúdo (TOC) dinâmica:** geração automática de TOC baseada nos cabeçalhos (H1, H2, H3) do documento atual, com scroll spy para indicar a seção ativa.
+* **Seleção de versão e idioma:** permite aos usuários alternar facilmente entre diferentes versões e idiomas da documentação, carregando o conteúdo correspondente.
+* **Busca integrada:** funcionalidade de busca em tempo real (com debounce) no conteúdo pré-carregado da versão/idioma selecionado.
+* **Referência de API:** página dedicada para exibir especificações OpenAPI (Swagger) usando [Redoc](https://github.com/Redocly/redoc).
+* **Feedback do Usuário:** botões de "like/dislike" com modal para coletar feedback sobre a utilidade das páginas.
+* **Design Responsivo:** interface adaptável para diferentes tamanhos de tela.
+* **"Documentation as Code" (DocAsCode):** baseado em arquivos estáticos (HTML, CSS, JS, Markdown) e versionamento Git, facilitando a colaboração e a integração com CI/CD.
 
 ## 🚀 Tecnologias
 
@@ -98,10 +98,10 @@ Siga estes passos para configurar e rodar o projeto localmente:
 ```
 ## 🎨 Customização
 
-* **Estrutura/Menu:** Adicione/remova arquivos `.md` e execute `node cria_menu.js` para atualizar a navegação.
-* **Aparência:** Modifique as variáveis CSS e estilos em `css/styles.css`.
-* **Comportamento:** Ajuste a lógica no `js/script.js`.
-* **Logo:** Substitua a imagem em `images/` e atualize o caminho no `index.html`.
+* **Estrutura/Menu:** adicione/remova arquivos `.md` e execute `node cria_menu.js` para atualizar a navegação.
+* **Aparência:** modifique as variáveis CSS e estilos em `css/styles.css`.
+* **Comportamento:** ajuste a lógica no `js/script.js`.
+* **Logo:** substitua a imagem em `images/` e atualize o caminho no `index.html`.
 
 ## 🙌 Contribuindo
 
