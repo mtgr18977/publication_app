@@ -1,79 +1,104 @@
 // Import modules
-import { loadContent, loadIndexContent } from './js/contentLoader.js';
+import { loadContent, loadIndexContent} from './js/contentLoader.js';
 import { generateTOC, setupScrollSpy } from './js/toc.js';
 import { preProcessCallouts } from './js/callouts.js';
+
+/**
+ * Preloads content by indexing markdown files for search.
+ * This function iterates through the structure.json to find all markdown files,
+ * fetches their content, and indexes them for the search functionality.
+ * It uses try-catch blocks to handle errors gracefully, ensuring the process
+ * continues even if some files fail to load.
+ */
+async function preloadContent() {
+    try {
+        const version = structure.find(v => v.name === currentVersion);
+        if (!version) {
+            console.error('Versão não encontrada para pré-carregamento:', currentVersion);
+            return;
+        }
+        const language = version.children.find(l => l.name === currentLanguage);
+        if (!language) {
+            console.error('Idioma não encontrada para pré-carregamento:', currentLanguage);
+            return;
+        }
+        await processItems(language.children);
+        console.log(`Pré-carregamento concluído para ${currentVersion}/${currentLanguage}. Total de arquivos indexados: ${Object.keys(searchIndex).length}`);
+
+    } catch (error) {
+        // Log any errors that occurred during the preload process
+        console.error("Erro durante pré-carregamento:", error);
+    }
+
+}
 
 /**
  * Loads the sidebar content.
  * This function fetches the 'structure.json' file, processes it, and builds the sidebar navigation based on the provided structure.
  */
 function loadSidebar() {
-    fetch('structure.json')
-        .then(response => response.json())
+    fetch('structure.json').then(response => {
+        if (!response.ok) {
+             throw new Error(`Falha ao carregar structure.json: Status ${response.status}`);
+         }
+         return response.json();
+    })
+        
         .then(data => {
             structure = data;
-            initDropdowns();
-            const loadContentFromStructure = () => {
-                const version = structure.find(v => v.name === currentVersion);
-                if (!version) {
-                    console.error('Versão não encontrada para pré-carregamento:', currentVersion);
-                    return;
-                }
-                const language = version.children.find(l => l.name === currentLanguage);
-                if (!language) {
-                    console.error('Idioma não encontrada para pré-carregamento:', currentLanguage);
-                    return;
-                }
-                const items = language.children
+            initDropdowns(); // Initialize dropdowns based on the structure
+            async function processItems(items) {
                 for (const item of items) {
-                     if (item.type === 'directory') {
-                          
-                     } else if (item.type === 'file' && item.path && item.path.endsWith('.md')) {
-                    try {
-                        // Evitar pré-carregar arquivos já indexados (caso haja duplicação na estrutura)
-                        if (searchIndex[item.path]) {
-                            continue;
+                     if (item.type === 'directory') { // if it is a folder
+                          if (item.children){
+                            await processItems(item.children); // Process the subfolders
+                          }
+                     } else if (item.type === 'file' && item.path && item.path.endsWith('.md')) { // If it is a markdown file
+                         try {
+                            // Check if the file has already been indexed to avoid duplication
+                            if (searchIndex[item.path]) {
+                                console.log(`Arquivo ${item.path} já indexado.`);
+                                continue;
+                            }
+        
+                            // Fetch the markdown file
+                            const response = await fetch(item.path);
+        
+                            // Check for HTTP errors
+                            if (!response.ok) {
+                                console.error(`Erro ${response.status} ao carregar arquivo para índice: ${item.path}`);
+                                continue; // Skip to the next file in case of error
+                            }
+        
+                            // Extract the content
+                            const content = await response.text();
+                            console.log(`Arquivo ${item.path} foi indexado.`);
+        
                         }
-
-                        // console.log('Pré-carregando arquivo:', item.path); // Log menos verboso
-                        const response = await fetch(item.path);
-                        if (!response.ok) {
-                            console.error(`Erro ${response.status} ao carregar arquivo para índice: ${item.path}`);
-                            continue; // Pula para o próximo arquivo
-                        }
-                        
+                     
                         const content = await response.text();
 
                     } catch (error) {
                         console.error(`Erro crítico ao pré-carregar ${item.path}:`, error);
                      }
                 }
-            }
-        }
-        
-        // Inicia o processo a partir dos filhos da estrutura de idioma
-        if (language.children && Array.isArray(language.children)) {
-             processItems(language.children);
-             console.log(`Pré-carregamento concluído para ${currentVersion}/${currentLanguage}. Total de arquivos indexados: ${Object.keys(searchIndex).length}`);
-        } else {
-             console.warn(`Estrutura de idioma '${currentLanguage}' não possui 'children' válidos.`);
-        }
-            }
+            }}
+            
            // Check URL to load specific content
            const urlParams = new URLSearchParams(window.location.search);
            const articlePath = urlParams.get('article');
            const homePage = urlParams.get('home');
-
+           
            if (articlePath) {
-               loadContent(articlePath, preProcessCallouts, generateTOC, setupScrollSpy);
+               loadContent(articlePath, preProcessCallouts, generateTOC, setupScrollSpy,loadFallbackContent);
            } else if (homePage) {
                loadIndexContent();
            } else {
                // Try to restore the last viewed article
                const savedPath = localStorage.getItem('currentPath');
-               if (savedPath) {
+               if (savedPath) { // If the path is saved, load it.
                    loadContent(savedPath, preProcessCallouts, generateTOC, setupScrollSpy);
-               } else {
+               } else{
                    loadIndexContent();
                }
            }
@@ -293,7 +318,7 @@ function updateSidebarAndContent(tryLoadSameFile = false) {
               
               console.log(`Tentando carregar arquivo correspondente: ${newPath}`);
               // Verifica se o novo caminho existe no índice antes de carregar
-               if (searchIndex[newPath]) { // Verifica no índice atual (pode não estar carregado ainda)
+               if (searchIndex[newPath]){ // Verifica no índice atual (pode não estar carregado ainda)
                    loadContent(newPath); 
                } else {
                     // Se não achar o arquivo correspondente, carrega a página inicial
@@ -303,10 +328,10 @@ function updateSidebarAndContent(tryLoadSameFile = false) {
          } else {
              // Se o caminho antigo era inválido ou apenas versão/idioma, carrega a inicial
              loadIndexContent();
-         }
-     } else if (!currentPath) {
+         } 
+     } else if (!currentPath){
           // Se não havia caminho atual, carrega a página inicial
-          loadIndexContent();
+          loadIndexContent(loadFallbackContent);
      } else {
           // Se tryLoadSameFile é false, mas havia um currentPath, apenas destaca
           highlightCurrentFile();
@@ -388,7 +413,7 @@ function buildSidebarTree(items, parentElement) {
                 e.stopPropagation(); // Impede que o clique se propague para a pasta pai
                 document.querySelectorAll('.sidebar-item.file.active').forEach(el => el.classList.remove('active'));
                 fileElement.classList.add('active');
-                console.log("Clicou no arquivo:", item.path);
+                console.log("Clicou no arquivo:", item.path)
                 loadContent(item.path); // Carrega o conteúdo
             });
             
@@ -441,89 +466,7 @@ function highlightCurrentFile() {
         console.warn(`Arquivo ativo (${currentPath}) não encontrado na sidebar atual.`);
     }
 }
-function loadContent(path) {
-    if (!path) {
-        console.error("Tentativa de carregar conteúdo com caminho vazio.");
-        loadFallbackContent("Caminho inválido fornecido.");
-        return;
-    }
-
-    console.log("Carregando conteúdo de:", path);
-    currentPath = path;
-    currentFile = path.split(/[\\/]/).pop(); // Pega o nome do arquivo
-    
-    localStorage.setItem('currentPath', currentPath); // Salva o caminho atual
-
-    // Atualizar a URL no navegador (sem recarregar a página)
-    try {
-        const newUrl = `${window.location.origin}${window.location.pathname}?article=${encodeURIComponent(path)}`;
-        history.pushState({ path }, '', newUrl);
-    } catch (e) {
-        console.warn("Não foi possível atualizar a URL com history.pushState:", e);
-        // Pode acontecer em iframes ou ambientes restritos
-    }
-
-    fetch(path)
-        .then(response => {
-            if (!response.ok) {
-                 // Lança um erro para ser pego pelo .catch()
-                 throw new Error(`Falha ao carregar ${path}: Status ${response.status}`); 
-            }
-            return response.text();
-        })
-        .then(markdown => {
-            // Pré-processa os callouts ANTES de enviar para o marked
-            const processedMarkdown = preProcessCallouts(markdown);
-            
-            // Renderiza com Marked
-            let htmlContent = '';
-            try {
-                 htmlContent = marked.parse(processedMarkdown);
-            } catch (markedError) {
-                 console.error("Erro durante marked.parse:", markedError);
-                 loadFallbackContent(`Erro ao processar Markdown do arquivo: ${path}`);
-                 return; // Aborta se o marked falhar
-            }
-
-            // ** SANITIZAÇÃO **
-            let cleanHtml = '';
-             try {
-                 cleanHtml = DOMPurify.sanitize(htmlContent); // Sanitize o HTML gerado
-             } catch (sanitizeError) {
-                 console.error("Erro durante DOMPurify.sanitize:", sanitizeError);
-                 loadFallbackContent(`Erro ao sanitizar conteúdo do arquivo: ${path}`);
-                 return; // Aborta se a sanitização falhar
-             }
-            
-             const contentElement = document.getElementById('content');
-             if (contentElement) {
-                 contentElement.innerHTML = `
-                     <div class="content-container">
-                         ${cleanHtml} // Usa o HTML SANITIZADO
-                     </div>
-                 `;
-                 contentElement.scrollTop = 0; // Rola para o topo ao carregar novo conteúdo
-             } else {
-                 console.error("Elemento 'content' não encontrado para inserir HTML.");
-                 return; // Aborta se não puder inserir o conteúdo
-             }
-            
-            // Funções pós-renderização
-             addHeadingIDs(); // Adiciona IDs primeiro
-             generateTOC();   // Gera TOC depois dos IDs
-             setupScrollSpy(); // Configura ScrollSpy por último
-             highlightCurrentFile(); // Garante que o arquivo certo está destacado
-        })
-        .catch(error => {
-            console.error('Erro ao carregar ou processar conteúdo:', path, error);
-            loadFallbackContent(error.message); // Mostra a mensagem de erro
-            currentPath = null; // Reseta o caminho atual em caso de erro
-             localStorage.removeItem('currentPath'); // Remove do localStorage também
-        });
-}
-
-
-function loadIndexContent() {
+function loadIndexContent(loadFallbackContent) {
      // Define o caminho padrão baseado na versão/idioma atual
      // Tenta carregar 'senhasegura.md', se não existir, tenta 'README.md' ou outro padrão
      const defaultFiles = ['senhasegura.md', 'README.md', 'index.md']; // Adicione outros padrões se necessário
@@ -532,14 +475,14 @@ function loadIndexContent() {
       for (const defaultFile of defaultFiles) {
           const potentialPath = `${currentVersion}/${currentLanguage}/${defaultFile}`;
           // Verifica se existe no índice (se já carregado) ou tenta um fetch rápido
-           // Idealmente, a estrutura JSON indicaria qual é o arquivo inicial
-          // Por enquanto, vamos apenas tentar carregar o primeiro padrão
-           loadContent(potentialPath); 
-           foundDefault = true; // Assume que vai carregar ou falhar no loadContent
-           break; 
+           
+          loadContent(potentialPath, preProcessCallouts, generateTOC, setupScrollSpy, loadFallbackContent); 
+          foundDefault = true; // Assume que vai carregar ou falhar no loadContent
+          break; 
       }
 
        if (!foundDefault) {
+        console.log(`Load fallback`)
             console.warn("Nenhum arquivo inicial padrão encontrado. Exibindo mensagem.");
             loadFallbackContent("Nenhum documento inicial encontrado para esta versão/idioma.");
        }
@@ -549,7 +492,7 @@ function loadIndexContent() {
     try {
         const newUrl = `${window.location.origin}${window.location.pathname}`; // URL base
         history.replaceState(null, '', newUrl); // Use replaceState para não criar entrada no histórico
-    } catch(e) {
+    } catch (e) {
         console.warn("Não foi possível limpar a URL com history.replaceState:", e);
     }
 }
@@ -565,7 +508,7 @@ function loadFallbackContent(errorMessage = "O conteúdo não pôde ser carregad
                 <h1>Erro ao Carregar Conteúdo</h1>
                 <p>Ocorreu um problema ao tentar exibir o documento solicitado.</p>
                 <p><strong>Detalhes:</strong> ${cleanErrorMessage}</p>
-                <p>Por favor, tente navegar para outro documento usando a barra lateral ou verifique o console para mais informações técnicas.</p>
+                <p>Por favor, tente navegar para outro documento usando a barra lateral ou verifique o console para mais informaçõe.s técnicas.</p>
             </div>
         `;
          // Limpa o TOC também
@@ -579,8 +522,8 @@ function loadFallbackContent(errorMessage = "O conteúdo não pôde ser carregad
 
 // --- Dynamic TOC ---
 function generateTOC(preProcessCallouts) {
-    const tocNav = document.getElementById('toc-nav');
-    const contentContainer = document.querySelector('.content-container'); // Busca dentro do container correto
+     const tocNav = document.getElementById('toc-nav');
+     const contentContainer = document.querySelector('.content-container'); // Busca dentro do container correto
 
      if (!tocNav) {
          console.warn("Elemento 'toc-nav' não encontrado para gerar TOC.");
@@ -676,6 +619,7 @@ function addHeadingIDs() { // function to add IDs to titles that don't have one
     });
 }
 
+
 // --- Scroll Spy to highlight active items in TOC ---
 let scrollSpyObserver = null; // Variável global para o observer
 
@@ -749,7 +693,7 @@ function setupScrollSpy() { // function to setup the scroll spy
         } else {
             // Se nenhum estiver visível (ex: rolou muito rápido ou está no final),
              // talvez destacar o primeiro ou o último toc item? Ou nenhum.
-             // Por enquanto, não destaca nenhum se nada estiver na área de ativação.
+             // Por enquanto, não destaca nenhum se nada estiver na área de ativação. 
         }
 
     }, observerOptions);
@@ -771,16 +715,20 @@ function setupScrollSpy() { // function to setup the scroll spy
  // --- initialize Feedback Buttons ---
 // Adiciona listeners aos botões de feedback (se existirem)
 function initializeFeedbackButtons() {
-    const likeBtn = document.querySelector('.like-btn');
-    const dislikeBtn = document.querySelector('.dislike-btn');
+    try{
+        const likeBtn = document.querySelector('.like-btn');
+        const dislikeBtn = document.querySelector('.dislike-btn');
 
-    if (likeBtn) {
-        likeBtn.addEventListener('click', () => showFeedbackModal('like'));
-    } else {
-        console.warn("Botão de 'like' não encontrado.");
-    }
-    if (dislikeBtn) {
-        dislikeBtn.addEventListener('click', () => showFeedbackModal('dislike'));
+        if (likeBtn) {
+            likeBtn.addEventListener('click', () => showFeedbackModal('like'));
+        } else {
+            console.warn("Botão de 'like' não encontrado.");
+        }
+        if (dislikeBtn) {
+            dislikeBtn.addEventListener('click', () => showFeedbackModal('dislike'));
+        } else {
+            console.warn("Botão de 'dislike' não encontrado.");
+        }
     } else {
         console.warn("Botão de 'dislike' não encontrado.");
     }
@@ -908,10 +856,10 @@ window.addEventListener('popstate', (event) => {
     console.log("Evento popstate disparado:", event.state);
     if (event.state && event.state.path) {
         // Encontrou um estado com caminho, carrega esse conteúdo
-        loadContent(event.state.path);
+        loadContent(event.state.path, preProcessCallouts, generateTOC, setupScrollSpy,loadFallbackContent);
         // O highlight deve ser chamado dentro do loadContent após a renderização
     } else {
-        // Estado nulo ou sem caminho, carrega a página inicial
+         // Estado nulo ou sem caminho, carrega a página inicial
         loadIndexContent();
     }
 });
@@ -927,7 +875,7 @@ document.addEventListener('DOMContentLoaded', () => {
         companyLogoLink.addEventListener('click', (e) => {
             e.preventDefault(); // Previne navegação padrão do link
             console.log("Logo clicado, carregando página inicial.");
-            loadIndexContent(); // Carrega o conteúdo inicial
+            loadIndexContent(loadFallbackContent); // Carrega o conteúdo inicial
         });
     } else {
         console.warn("Elemento do logo ('.company-name') não encontrado.");
@@ -935,10 +883,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Inicializar sistema de busca
     initializeSearch();
+    
+    // Carregar a estrutura da documentação
+    fetch('structure.json')
+        .then(response => {
 
-       // Carregar a estrutura da documentação
-       fetch('structure.json')
-           .then(response => {
                if (!response.ok) {
                     throw new Error(`Falha ao carregar structure.json: Status ${response.status}`);
             }
@@ -947,11 +896,12 @@ document.addEventListener('DOMContentLoaded', () => {
              if (!contentType || !contentType.includes("application/json")) {
                  throw new TypeError("Oops, structure.json não é JSON!");
              }
-            return response.json();
+             return response.json();
         })
         .then(data => {
-            if (!Array.isArray(data)) {
-                 throw new Error("Estrutura carregada ('structure.json') não é um array.");
+
+               if (!Array.isArray(data)) {
+                throw new Error("Estrutura carregada ('structure.json') não é um array.");
             }
             structure = data; // Armazena a estrutura globalmente
             console.log("Estrutura da documentação carregada:", structure);
@@ -977,12 +927,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (initialPathToLoad) {
                  // Verifica se o caminho recuperado ainda é válido para a versão/idioma atuais
                  // Isso pode ser complexo. Uma abordagem simples é apenas tentar carregar.
-                 loadContent(initialPathToLoad);
+                 loadContent(initialPathToLoad, preProcessCallouts, generateTOC, setupScrollSpy,loadFallbackContent);
             } else {
                  console.log("Nenhum 'article' na URL ou path salvo. Carregando página inicial.");
-                 loadIndexContent(); // Carrega a página inicial padrão
+                 loadIndexContent(loadFallbackContent); // Carrega a página inicial padrão
             }
-
+             
+            
             // Inicializa os botões de feedback
             initializeFeedbackButtons();
 
