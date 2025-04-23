@@ -1,57 +1,34 @@
-// Variáveis Globais
-let currentVersion = localStorage.getItem('docVersion') || '4.0';
-let currentLanguage = localStorage.getItem('docLanguage') || 'pt';
-let structure = [];
-let currentPath = null;
-let currentFile = null;
-let searchIndex = {}; // Índice de busca
-let searchDebounceTimer = null;
-let isPreloading = false;
-let dropdownsInitialized = false;
+// Import modules
+import { loadContent, loadIndexContent } from './js/contentLoader.js';
+import { generateTOC, setupScrollSpy } from './js/toc.js';
+import { preProcessCallouts } from './js/callouts.js';
 
-// --- Funções de Busca ---
-
-// Função para pré-carregar o conteúdo de todos os documentos
-async function preloadContent() {
-    if (isPreloading) {
-        console.log('Pré-carregamento já em andamento...');
-        return;
-    }
-
-    isPreloading = true;
-    console.log('Iniciando pré-carregamento de conteúdo...');
-    
-    try {
-        // Encontrar a estrutura da versão/idioma atual
-        const version = structure.find(v => v.name === currentVersion);
-        if (!version) {
-            console.error('Versão não encontrada para pré-carregamento:', currentVersion);
-            isPreloading = false;
-            return;
-        }
-
-        const language = version.children.find(l => l.name === currentLanguage);
-        if (!language) {
-            console.error('Idioma não encontrado para pré-carregamento:', currentLanguage);
-            isPreloading = false;
-            return;
-        }
-
-        // Limpa o índice antes de recarregar
-        searchIndex = {}; 
-        console.log('Índice de busca limpo para pré-carregamento.');
-
-        // Função recursiva para processar todos os arquivos na estrutura atual
-        async function processItems(items) {
-            for (const item of items) {
-                if (item.type === 'directory') {
-                    // Certifique-se de que 'children' existe antes de chamar recursivamente
-                    if (item.children && Array.isArray(item.children)) {
-                         await processItems(item.children);
-                    } else {
-                        console.warn(`Diretório '${item.name}' (${item.path}) não possui 'children' válidos.`);
-                    }
-                } else if (item.type === 'file' && item.path && item.path.endsWith('.md')) {
+/**
+ * Loads the sidebar content.
+ * This function fetches the 'structure.json' file, processes it, and builds the sidebar navigation based on the provided structure.
+ */
+function loadSidebar() {
+    fetch('structure.json')
+        .then(response => response.json())
+        .then(data => {
+            structure = data;
+            initDropdowns();
+            const loadContentFromStructure = () => {
+                const version = structure.find(v => v.name === currentVersion);
+                if (!version) {
+                    console.error('Versão não encontrada para pré-carregamento:', currentVersion);
+                    return;
+                }
+                const language = version.children.find(l => l.name === currentLanguage);
+                if (!language) {
+                    console.error('Idioma não encontrada para pré-carregamento:', currentLanguage);
+                    return;
+                }
+                const items = language.children
+                for (const item of items) {
+                     if (item.type === 'directory') {
+                          
+                     } else if (item.type === 'file' && item.path && item.path.endsWith('.md')) {
                     try {
                         // Evitar pré-carregar arquivos já indexados (caso haja duplicação na estrutura)
                         if (searchIndex[item.path]) {
@@ -66,228 +43,48 @@ async function preloadContent() {
                         }
                         
                         const content = await response.text();
-                        // Adiciona ao índice de busca
-                        searchIndex[item.path] = {
-                            title: item.title || item.name.replace('.md', ''),
-                            content: content, // Armazena o conteúdo bruto
-                            path: item.path
-                        };
-                        // console.log('Arquivo indexado com sucesso:', item.path); // Log menos verboso
+
                     } catch (error) {
                         console.error(`Erro crítico ao pré-carregar ${item.path}:`, error);
-                    }
+                     }
                 }
             }
         }
         
         // Inicia o processo a partir dos filhos da estrutura de idioma
         if (language.children && Array.isArray(language.children)) {
-             await processItems(language.children);
+             processItems(language.children);
              console.log(`Pré-carregamento concluído para ${currentVersion}/${currentLanguage}. Total de arquivos indexados: ${Object.keys(searchIndex).length}`);
         } else {
              console.warn(`Estrutura de idioma '${currentLanguage}' não possui 'children' válidos.`);
         }
-
-        // Atualiza o placeholder da busca para indicar que está pronto
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) {
-            searchInput.placeholder = 'Buscar na documentação...';
-            searchInput.disabled = false; // Habilita o input
-        }
-    } catch (error) {
-        console.error('Erro geral durante o pré-carregamento:', error);
-        const searchInput = document.getElementById('searchInput');
-         if (searchInput) {
-             searchInput.placeholder = 'Erro no índice de busca';
-             searchInput.disabled = true; // Desabilita se houve erro
-         }
-    } finally {
-        isPreloading = false;
-        console.log('Pré-carregamento finalizado.');
-    }
-}
-
-
-// Função para realizar a busca
-function performSearch(query) {
-    if (!query || query.length < 2) {
-        hideSearchModal();
-        return;
-    }
-
-    const results = [];
-    const searchTerms = query.toLowerCase().split(' ').filter(term => term.length > 0);
-
-    // Verifica se o índice está vazio ou se o pré-carregamento ainda está ocorrendo
-     if (Object.keys(searchIndex).length === 0) {
-        if (isPreloading) {
-            console.log('Busca adiada: Pré-carregamento em andamento...');
-            // Opcional: mostrar mensagem ao usuário
-        } else {
-            console.warn('Índice de busca vazio. Tentando pré-carregar novamente...');
-            preloadContent(); // Tenta recarregar se estiver vazio e não carregando
-        }
-         return;
-     }
-
-    for (const [path, doc] of Object.entries(searchIndex)) {
-        // Verifica se doc.content e doc.title existem antes de acessá-los
-        if (!doc || typeof doc.content !== 'string' || typeof doc.title !== 'string') {
-             console.warn(`Documento inválido no índice para o caminho: ${path}`);
-             continue; // Pula para o próximo documento
-        }
-        const content = doc.content.toLowerCase();
-        const title = doc.title.toLowerCase();
-        
-        // Verifica se todos os termos de busca estão presentes
-        const hasAllTerms = searchTerms.every(term => 
-            content.includes(term) || title.includes(term)
-        );
-
-        if (hasAllTerms) {
-            // Encontra o primeiro trecho relevante
-            let snippet = 'Nenhum trecho encontrado.'; // Valor padrão
-            let firstTermIndex = -1;
-
-            // Encontra o índice da primeira ocorrência de qualquer termo de busca
-            for (const term of searchTerms) {
-                const termIndex = content.indexOf(term);
-                 if (termIndex !== -1) {
-                     if (firstTermIndex === -1 || termIndex < firstTermIndex) {
-                         firstTermIndex = termIndex;
-                     }
-                 }
             }
+           // Check URL to load specific content
+           const urlParams = new URLSearchParams(window.location.search);
+           const articlePath = urlParams.get('article');
+           const homePage = urlParams.get('home');
 
-            // Se um termo foi encontrado, cria o snippet
-            if (firstTermIndex !== -1) {
-                const start = Math.max(0, firstTermIndex - 50); // Começa 50 chars antes
-                const end = Math.min(content.length, firstTermIndex + 150); // Pega 150 chars depois
-                // Pega o conteúdo bruto original para o snippet
-                snippet = doc.content.substring(start, end); 
-            } else {
-                 // Se nenhum termo foi achado no conteúdo, mas achou no título, pega o início do conteúdo
-                 if (searchTerms.some(term => title.includes(term))) {
-                      snippet = doc.content.substring(0, 200); // Pega os primeiros 200 caracteres
-                 }
-            }
-
-            results.push({
-                title: doc.title,
-                path: doc.path,
-                snippet: snippet // Armazena o snippet bruto
-            });
-        }
-    }
-
-    displaySearchResults(results, query);
-}
-
-// Função para exibir os resultados da busca
-function displaySearchResults(results, query) {
-    const resultsContainer = document.getElementById('searchResults');
-    const resultsCount = document.getElementById('searchResultsCount');
-    if (!resultsContainer || !resultsCount) {
-        console.error('Elementos de busca (modal) não encontrados no DOM.');
-        return;
-    }
-    
-    resultsContainer.innerHTML = ''; // Limpa resultados anteriores
-    resultsCount.textContent = `${results.length} resultado${results.length !== 1 ? 's' : ''} para "${query}"`;
-
-    if (results.length === 0) {
-        resultsContainer.innerHTML = `
-            <div class="search-result-item">
-                <h3>Nenhum resultado encontrado</h3>
-                <p class="snippet-container">Tente usar termos diferentes ou mais específicos.</p>
-            </div>
-        `;
-    } else {
-        results.forEach(result => {
-            const item = document.createElement('div');
-            item.className = 'search-result-item';
-            
-            // Sanitize o título antes de usá-lo
-            const cleanTitle = DOMPurify.sanitize(result.title || "Título Indisponível", { USE_PROFILES: { html: true } });
-            
-            // Sanitize o snippet ANTES de destacar
-            let cleanSnippet = DOMPurify.sanitize(result.snippet || "", { USE_PROFILES: { html: true } });
-            
-            // Destaca os termos de busca no snippet JÁ SANITIZADO
-            // Usar um placeholder seguro para o highlight para evitar re-injeção
-            const highlightStartTag = '{{HIGHLIGHT_START}}';
-            const highlightEndTag = '{{HIGHLIGHT_END}}';
-            
-            query.toLowerCase().split(' ').filter(term => term.length > 0).forEach(term => {
-                // Regex para encontrar o termo (case-insensitive) fora de tags HTML potenciais
-                // Isso é complexo e pode não ser perfeito. Uma abordagem mais robusta usaria manipulação de DOM.
-                try {
-                    // Escapa caracteres especiais do termo para usar em Regex
-                     const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                     // Regex para encontrar o termo ignorando case
-                     const regex = new RegExp(escapedTerm, 'gi'); 
-                     cleanSnippet = cleanSnippet.replace(regex, match => 
-                         `${highlightStartTag}${match}${highlightEndTag}`
-                     );
-                } catch (e) {
-                     console.error("Erro ao aplicar regex para highlight:", e);
-                }
-            });
-
-             // Substitui os placeholders pelas tags span reais
-            cleanSnippet = cleanSnippet.replace(new RegExp(highlightStartTag.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), '<span class="highlight">');
-            cleanSnippet = cleanSnippet.replace(new RegExp(highlightEndTag.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), '</span>');
-
-
-            // Extrai o caminho do arquivo para mostrar a hierarquia
-            const pathParts = result.path ? result.path.split(/[\\/]/) : []; // Trata path nulo/inválido e separadores \ ou /
-            const version = pathParts.length > 0 ? pathParts[0] : 'N/A';
-            const language = pathParts.length > 1 ? pathParts[1] : 'N/A';
-             // Junta as partes restantes do caminho, tratando path nulo
-            const filePath = pathParts.length > 2 ? pathParts.slice(2).join(' > ') : (result.path || "Caminho Indisponível");
-
-            // Cria o HTML do item. NÃO use innerHTML diretamente com cleanSnippet aqui se ele já foi manipulado com replace.
-            // É mais seguro construir o DOM programaticamente, mas para simplificar:
-            const titleElement = document.createElement('h3');
-             // Use textContent para o título e o path para evitar problemas
-             titleElement.textContent = `${result.title || "Título Indisponível"} `; 
-             const pathSpan = document.createElement('span');
-             pathSpan.className = 'result-path';
-             pathSpan.textContent = `(${filePath})`;
-             titleElement.appendChild(pathSpan);
-
-             const snippetContainer = document.createElement('div');
-             snippetContainer.className = 'snippet-container';
-             // Agora podemos usar innerHTML pois o conteúdo foi sanitizado e os highlights adicionados com cuidado
-             snippetContainer.innerHTML = `...${cleanSnippet}...`; 
-
-             const metaDiv = document.createElement('div');
-             metaDiv.className = 'result-meta';
-             metaDiv.innerHTML = `
-                 <span>Versão: ${version}</span>
-                 <span>Idioma: ${language}</span>
-             `;
-
-             item.appendChild(titleElement);
-             item.appendChild(snippetContainer);
-             item.appendChild(metaDiv);
-
-
-            item.addEventListener('click', () => {
-                if (result.path) {
-                     loadContent(result.path);
-                     hideSearchModal();
-                } else {
-                     console.error("Tentativa de carregar resultado de busca sem caminho definido.");
-                }
-            });
-
-            resultsContainer.appendChild(item);
+           if (articlePath) {
+               loadContent(articlePath, preProcessCallouts, generateTOC, setupScrollSpy);
+           } else if (homePage) {
+               loadIndexContent();
+           } else {
+               // Try to restore the last viewed article
+               const savedPath = localStorage.getItem('currentPath');
+               if (savedPath) {
+                   loadContent(savedPath, preProcessCallouts, generateTOC, setupScrollSpy);
+               } else {
+                   loadIndexContent();
+               }
+           }
+        })
+        .catch(error => {
+            console.error('Error loading sidebar:', error);
+            loadFallbackContent();
         });
-    }
-
-    showSearchModal();
 }
+
+
 
 
 function showSearchModal() {
@@ -377,12 +174,13 @@ function initializeSearch() {
 
 // --- Funções da Barra Lateral e Conteúdo ---
 
+// --- Initialize Dropdowns ---
 function initDropdowns() {
     if (dropdownsInitialized) return;
-
+    // Get dropdown elements
     const versionSelect = document.getElementById('versionSelect');
     const languageSelect = document.getElementById('languageSelect');
-
+    // check if they are valid
     if (!versionSelect || !languageSelect) {
         console.error("Dropdowns de versão ou idioma não encontrados. Inicialização abortada.");
         return;
@@ -489,7 +287,7 @@ function updateSidebarAndContent(tryLoadSameFile = false) {
      if (tryLoadSameFile && currentPath) {
          // Extrai o caminho relativo após a versão e idioma
          const pathParts = currentPath.split(/[\\/]/);
-         if (pathParts.length > 2) {
+         if (pathParts.length > 2) { // check if the array is valid
               const relativePath = pathParts.slice(2).join('/'); // Usa / como separador padrão
               const newPath = `${currentVersion}/${currentLanguage}/${relativePath}`;
               
@@ -516,6 +314,7 @@ function updateSidebarAndContent(tryLoadSameFile = false) {
 }
 
 
+// --- Function to build the sidebar ---
 function buildSidebarTree(items, parentElement) {
      if (!items || !Array.isArray(items)) {
           console.warn("Tentativa de construir sidebar com itens inválidos:", items);
@@ -642,41 +441,6 @@ function highlightCurrentFile() {
         console.warn(`Arquivo ativo (${currentPath}) não encontrado na sidebar atual.`);
     }
 }
-
-// Função para pré-processar callouts no Markdown ANTES de passar para o marked.js
-function preProcessCallouts(markdown) {
-    if (typeof markdown !== 'string') return ''; // Garante que é string
-
-    // Expressão regular para encontrar callouts: :::(tipo) (Título) ... \n:::
-    const calloutRegex = /::: MENSAGEM\s*\r?\n:::\s*([\s\S]*?)\r?\n:::/gm; // Exemplo: Encontrar '::: MENSAGEM'
-
-    // Regex mais específico para o formato :::(Tipo) (Título) Conteúdo :::
-     const specificCalloutRegex = /:::\s*\((\w+)\)\s*\(?([^\n\r]*)\)?\s*\r?\n([\s\S]*?)\r?\n:::/gm;
-
-    let processedMarkdown = markdown.replace(specificCalloutRegex, (match, type, title, content) => {
-        const calloutType = type.toLowerCase();
-        // Limpa espaços extras do título e conteúdo
-        const cleanTitle = title.trim();
-        const cleanContent = content.trim(); 
-
-        // Gera o HTML diretamente. O marked.js geralmente respeita HTML bruto.
-        // Importante: O CONTEÚDO INTERNO (cleanContent) será processado pelo marked.js depois!
-        // A sanitização principal ocorrerá APÓS o marked.parse completo.
-        return `<div class="callout callout-${calloutType}">
-<div class="callout-title">${cleanTitle}</div>
-<div class="callout-content">
-${cleanContent} 
-</div>
-</div>`;
-    });
-
-    // Remover tags de fechamento perdidas (se a regex não capturar tudo perfeitamente)
-    processedMarkdown = processedMarkdown.replace(/^\s*:::\s*$/gm, ''); // Remove linhas contendo apenas :::
-
-    return processedMarkdown;
-}
-
-// Função para carregar e renderizar conteúdo Markdown
 function loadContent(path) {
     if (!path) {
         console.error("Tentativa de carregar conteúdo com caminho vazio.");
@@ -758,12 +522,12 @@ function loadContent(path) {
         });
 }
 
-// Carrega a página inicial (senhasegura.md ou similar)
+
 function loadIndexContent() {
      // Define o caminho padrão baseado na versão/idioma atual
      // Tenta carregar 'senhasegura.md', se não existir, tenta 'README.md' ou outro padrão
      const defaultFiles = ['senhasegura.md', 'README.md', 'index.md']; // Adicione outros padrões se necessário
-     let foundDefault = false;
+    let foundDefault = false;
 
       for (const defaultFile of defaultFiles) {
           const potentialPath = `${currentVersion}/${currentLanguage}/${defaultFile}`;
@@ -790,7 +554,7 @@ function loadIndexContent() {
     }
 }
 
-// Função de fallback para erros de carregamento
+// --- Fallback function for load errors ---
 function loadFallbackContent(errorMessage = "O conteúdo não pôde ser carregado.") {
     const contentElement = document.getElementById('content');
     if (contentElement) {
@@ -812,10 +576,9 @@ function loadFallbackContent(errorMessage = "O conteúdo não pôde ser carregad
     }
 }
 
-// --- Funções de Tabela de Conteúdos (TOC) e Scroll Spy ---
 
-// Gera TOC dinâmica
-function generateTOC() {
+// --- Dynamic TOC ---
+function generateTOC(preProcessCallouts) {
     const tocNav = document.getElementById('toc-nav');
     const contentContainer = document.querySelector('.content-container'); // Busca dentro do container correto
 
@@ -881,8 +644,8 @@ function generateTOC() {
     });
 }
 
-// Adiciona IDs automáticos aos headings se não existirem
-function addHeadingIDs() {
+// --- Add IDs to titles ---
+function addHeadingIDs() { // function to add IDs to titles that don't have one
     const contentContainer = document.querySelector('.content-container');
      if (!contentContainer) return;
 
@@ -913,10 +676,10 @@ function addHeadingIDs() {
     });
 }
 
-// Scroll Spy para destacar itens ativos no TOC
+// --- Scroll Spy to highlight active items in TOC ---
 let scrollSpyObserver = null; // Variável global para o observer
 
-function setupScrollSpy() {
+function setupScrollSpy() { // function to setup the scroll spy
     // Desconecta o observer anterior, se existir
     if (scrollSpyObserver) {
         scrollSpyObserver.disconnect();
@@ -1004,8 +767,8 @@ function setupScrollSpy() {
      console.log("ScrollSpy configurado e observando headings.");
 }
 
-// --- Funções de Feedback ---
-
+// --- Feedback Functions ---
+ // --- initialize Feedback Buttons ---
 // Adiciona listeners aos botões de feedback (se existirem)
 function initializeFeedbackButtons() {
     const likeBtn = document.querySelector('.like-btn');
@@ -1023,7 +786,7 @@ function initializeFeedbackButtons() {
     }
 }
 
-// Função para criar e exibir o modal de feedback
+// --- create the feedback Modal ---
 function showFeedbackModal(type) {
     // Remover modal anterior, se existir
     const existingModal = document.querySelector('.feedback-modal');
@@ -1138,6 +901,7 @@ function showFeedbackModal(type) {
 }
 
 // --- Navegação e Inicialização ---
+// --- Navigation and Initialization ---
 
 // Lidar com o evento popstate (navegação pelo histórico do navegador)
 window.addEventListener('popstate', (event) => {
@@ -1155,6 +919,7 @@ window.addEventListener('popstate', (event) => {
 // Configuração Inicial no Carregamento do DOM
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM Carregado. Iniciando configuração.");
+    loadSidebar()
 
     // Configurar clique no logo para ir para a página inicial
     const companyLogoLink = document.querySelector('.company-name'); // Usar o link <a>
@@ -1171,11 +936,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Inicializar sistema de busca
     initializeSearch();
 
-    // Carregar a estrutura da documentação
-    fetch('structure.json')
-        .then(response => {
-            if (!response.ok) {
-                 throw new Error(`Falha ao carregar structure.json: Status ${response.status}`);
+       // Carregar a estrutura da documentação
+       fetch('structure.json')
+           .then(response => {
+               if (!response.ok) {
+                    throw new Error(`Falha ao carregar structure.json: Status ${response.status}`);
             }
              // Verifica o content-type para garantir que é JSON
              const contentType = response.headers.get("content-type");
@@ -1224,7 +989,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Inicia o pré-carregamento do índice de busca EM SEGUNDO PLANO
             // Usar setTimeout para não bloquear a renderização inicial
              setTimeout(preloadContent, 1000); // Atraso de 1 segundo
-
+ 
         })
         .catch(error => {
             console.error('Erro fatal ao carregar ou processar structure.json:', error);
