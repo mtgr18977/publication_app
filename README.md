@@ -1,8 +1,5 @@
-# Plataforma Sem Nome 📄✨ (Sua Plataforma de Documentação Dinâmica)
-
-<p align="center">
-  <img src="images/logo.png" alt="Plataforma Sem Nome Logo" width="300"/>
-  </p>
+# Plataforma Sem Nome 📄✨ 
+## Sua plataforma de documentação selfmade (quase) :D
 
 <p align="center">
   <em>Uma plataforma moderna e interativa para criar, gerenciar e publicar documentação técnica com a filosofia "Documentation as Code".</em>
