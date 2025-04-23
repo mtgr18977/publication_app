@@ -6,22 +6,42 @@
 }
 html, body {
     height: 100%;
-    background: #e5f9f5; /* Fundo verde claro */
+    /* background: #f8f9fa; /* Fundo cinza bem claro (era verde claro) */
+    background: #ffffff; /* Ou fundo branco puro */
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    color: #003330; /* Texto escuro esverdeado */
+    color: #212529; /* Texto cinza bem escuro (era verde escuro) */
     line-height: 1.8;
     font-size: 16px;
 }
+
+/* Variáveis de Cor - Paleta Cinza */
+:root {
+    --primary-color: #495057;      /* Cinza médio-escuro (era verde turquesa médio) */
+    --primary-light: #adb5bd;      /* Cinza claro (era verde turquesa) */
+    --primary-dark: #212529;       /* Cinza bem escuro (era verde escuro) */
+    --accent-color: #007bff;       /* Azul como cor de destaque (ou outro cinza, ex: #6c757d) */
+    --background-light: #f8f9fa;   /* Cinza muito claro (era verde bem claro) */
+    --background-medium: #e9ecef;  /* Cinza um pouco mais escuro para hover/fundos secundários */
+    --text-color: #212529;         /* Cinza bem escuro (era #333) */
+    --text-light: #6c757d;         /* Cinza médio (era #666) */
+    --border-color: #dee2e6;      /* Cinza para bordas (era verde claro) */
+    --navbar-bg: #343a40;         /* Cinza escuro para navbar (era verde escuro) */
+    --navbar-text: #f8f9fa;        /* Texto claro para navbar */
+    --navbar-border: #495057;      /* Borda na navbar */
+    --code-bg: #f1f3f5;           /* Fundo para blocos de código */
+}
+
+
 /* Navbar */
 .navbar {
     padding: 0 2rem;
     height: 80px;
-    background: #00332E;
+    background: var(--navbar-bg); /* Usa variável navbar */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 0;
     z-index: 100;
-    color: #ffffff;
+    color: var(--navbar-text); /* Usa variável navbar */
     display: flex;
     align-items: center;
 }
@@ -44,7 +64,24 @@ html, body {
     width: 200px;
     height: 100%;
     padding: 8px 1rem;
+    color: whitesmoke;
 }
+/* Ajuste para o logo no tema escuro da navbar */
+.company-logo {
+    /* Se o logo original for escuro, pode precisar de um filtro ou versão clara */
+     /* filter: brightness(0) invert(1); */ /* Exemplo para inverter cores */
+    height: auto;
+    max-height: 60px; /* Ajuste a altura conforme necessário */
+    width: auto;
+    display: block;
+    transition: opacity 0.2s ease;
+    object-fit: contain;
+    margin: auto;
+}
+.company-logo:hover {
+    opacity: 0.9;
+}
+
 .dropdowns-container {
     display: flex;
     align-items: center;
@@ -52,15 +89,16 @@ html, body {
     height: 100%;
 }
 .dropdown {
-    padding: 0.4rem 2rem 0.4rem 0.8rem; /* Ajustando padding */
-    border: 1px solid #00B29A;
+    padding: 0.4rem 2rem 0.4rem 0.8rem;
+    border: 1px solid var(--navbar-border); /* Borda cinza */
     border-radius: 6px;
-    background: #004D40;
-    color: #ffffff;
+    background: var(--primary-dark); /* Fundo cinza escuro */
+    color: var(--navbar-text); /* Texto claro */
     font-size: 0.875rem;
     cursor: pointer;
     appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300E1C4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    /* Ícone de seta - usando cor de destaque ou cinza claro */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23adb5bd' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right 0.5rem center;
     background-size: 0.875rem;
@@ -68,14 +106,15 @@ html, body {
     max-width: 160px;
 }
 .dropdown:hover {
-    border-color: #00E1C4;
-    background-color: #00594A;
+    border-color: var(--primary-light); /* Cinza claro no hover */
+    background-color: var(--primary-color); /* Cinza médio no hover */
 }
 .dropdown:focus {
     outline: none;
-    border-color: #00E1C4;
-    box-shadow: 0 0 0 2px rgba(0, 225, 196, 0.2);
+    border-color: var(--accent-color); /* Cor de destaque no foco */
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2); /* Sombra com cor de destaque */
 }
+
 /* Layout principal */
 .container {
     display: grid;
@@ -85,12 +124,11 @@ html, body {
     margin: 0 auto;
     overflow: hidden;
     gap: 1.5rem;
+    padding-top: 1rem; /* Adiciona espaço acima */
 }
-/* Ajustes globais para resolver problemas de espaçamento */
 html {
-    -webkit-text-size-adjust: 100%; /* Prevenir ajustes automáticos de texto */
+    -webkit-text-size-adjust: 100%;
 }
-/* Prevenção de espaçamentos indesejados */
 p, h1, h2, h3, h4, h5, h6 {
     margin-bottom: 0.75em;
 }
@@ -102,42 +140,41 @@ p, h1, h2, h3, h4, h5, h6 {
 @media (max-width: 768px) {
     .container {
         grid-template-columns: 1fr;
+        height: auto; /* Ajuste para mobile */
+        overflow: visible;
     }
 }
+
 /* Barra lateral */
 .sidebar {
     width: 100%;
     height: 100%;
-    background: #ffffff;
-    border-right: 1px solid #00B29A;
+    background: #ffffff; /* Fundo branco */
+    border-right: 1px solid var(--border-color); /* Borda cinza */
     overflow-y: auto;
     padding: 1rem;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
-
-.sidebar-header {
+.sidebar-header { /* Não usado no HTML atual, mas mantido */
     padding: 0 1rem 1rem;
     margin-bottom: 1rem;
-    border-bottom: 1px solid #00B29A;
+    border-bottom: 1px solid var(--border-color);
     font-size: 1.2rem;
     font-weight: 600;
-    color: #00766C; /* Verde turquesa médio */
+    color: var(--primary-dark); /* Cinza escuro */
 }
-
-/* Ajuste da estrutura da sidebar */
 #sidebar-content {
     width: 100%;
     overflow: visible;
 }
-
-/* Posicionamento de itens da sidebar */
+/* Itens da Sidebar */
 .sidebar-item {
     position: relative;
-    padding: 0.5rem 0.5rem 0.5rem 2rem;
+    padding: 0.5rem 0.5rem 0.5rem 0; /* Removido padding-left inicial */
     margin: 0.3rem 0;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
     border-radius: 6px;
     display: flex;
     align-items: center;
@@ -146,68 +183,78 @@ p, h1, h2, h3, h4, h5, h6 {
     width: 100%;
     overflow-wrap: break-word;
     word-break: break-word;
+    color: var(--text-color); /* Cor de texto padrão */
 }
-
+/* Wrapper para controlar indentação */
+.sidebar-folder-wrapper {
+    width: 100%;
+    margin-bottom: 2px; /* Espaço entre wrappers */
+}
 /* Elementos de pasta */
 .sidebar-folder {
     font-weight: 500;
-    color: #004D40; /* Verde escuro */
-    width: 100%;
-    padding-right: 8px;
-    position: relative;
-    overflow-wrap: break-word;
-    word-break: break-word;
+    color: var(--primary-dark); /* Cinza escuro */
+    padding: 0.5rem; /* Padding interno */
+    transition: background-color 0.2s ease;
 }
-
+.sidebar-folder:hover {
+    background-color: var(--background-light); /* Fundo claro no hover */
+}
 .folder-icon {
     margin-right: 0.5rem;
-    color: #00766C; /* Verde turquesa médio */
+    color: var(--text-light); /* Ícone cinza médio */
+    display: inline-block;
+    width: 1em; /* Garante espaço para o ícone */
 }
-
 .sidebar-folder.open .folder-icon {
-    color: #00E1C4; /* Verde turquesa brilhante */
+    color: var(--primary-dark); /* Ícone mais escuro quando aberto */
 }
-
 /* Itens de arquivo */
 .sidebar-item.file {
-    color: #006356; /* Verde médio */
+    color: var(--text-color); /* Cor padrão */
     font-weight: 400;
     white-space: normal;
     overflow: visible;
     text-overflow: clip;
-    padding-right: 8px;
     width: 100%;
     word-wrap: break-word;
-    overflow-wrap: break-word;
-    word-break: break-word;
+    padding: 0.5rem 0.5rem 0.5rem 0.5rem; /* Padding interno */
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
-
 .file-icon {
     margin-right: 0.5rem;
-    color: #00B29A; /* Verde turquesa */
+    color: var(--text-light); /* Ícone cinza médio */
+    display: inline-block;
+    width: 1em;
 }
-
-.sidebar-item.file:hover,
+.sidebar-item.file:hover {
+    background: var(--background-light); /* Fundo claro no hover */
+    color: var(--primary-dark); /* Texto escuro no hover */
+}
 .sidebar-item.file.active {
-    background: #c4f7ef; /* Verde turquesa muito claro */
-    color: #004D40; /* Verde escuro */
+    background: var(--accent-color); /* Fundo com cor de destaque */
+    color: #ffffff; /* Texto branco no item ativo */
+    font-weight: 500;
+}
+.sidebar-item.file.active .file-icon {
+    color: #ffffff; /* Ícone branco no item ativo */
 }
 
 /* Container de filhos */
 .children-container {
     width: 100%;
-    padding-left: 1rem;
+    padding-left: 15px; /* Indentação para filhos */
     margin-left: 0;
     display: none;
     overflow: visible;
+    border-left: 1px solid var(--border-color); /* Linha sutil de indentação */
+    margin-left: 7px; /* Alinha a borda com o ícone da pasta */
+    padding-top: 5px;
 }
-
 .sidebar-folder.open + .children-container {
     display: block;
 }
-
-/* Garantir que os contêineres sejam dimensionados corretamente */
-.sidebar-content > div, 
+.sidebar-content > div,
 .children-container > div {
     width: 100%;
 }
@@ -218,246 +265,234 @@ p, h1, h2, h3, h4, h5, h6 {
     height: 100%;
     overflow-y: auto;
     padding: 2.5rem;
-    background: #ffffff;
+    background: #ffffff; /* Fundo branco */
     font-size: 1rem;
     line-height: 1.8;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    color: var(--text-color); /* Cor de texto padrão */
 }
 .content-container {
     max-width: 900px;
     margin: 0 auto;
     padding-bottom: 2rem;
 }
-.content-container ul:not(.toc) {
-    list-style-type: disc;
-    padding-left: 1.5rem; /* recuo reduzido */
+/* Estilos para elementos Markdown */
+.content-container h1, .content-container h2, .content-container h3,
+.content-container h4, .content-container h5, .content-container h6 {
+    color: var(--primary-dark); /* Títulos mais escuros */
+    margin-top: 1.5em;
+    margin-bottom: 0.75em;
+    line-height: 1.3;
 }
+.content-container h1 { font-size: 2.2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.3em; }
+.content-container h2 { font-size: 1.8rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.2em; }
+.content-container h3 { font-size: 1.4rem; }
+.content-container a {
+    color: var(--accent-color); /* Links com cor de destaque */
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+.content-container a:hover {
+    color: var(--primary-dark); /* Links mais escuros no hover */
+    text-decoration: underline;
+}
+.content-container code { /* Inline code */
+    background-color: var(--code-bg); /* Fundo cinza claro para código */
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: var(--primary-dark);
+}
+.content-container pre { /* Code blocks */
+    background-color: var(--code-bg);
+    padding: 1rem;
+    border-radius: 6px;
+    overflow-x: auto;
+    border: 1px solid var(--border-color);
+}
+.content-container pre code {
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+    font-size: 0.9em;
+}
+.content-container blockquote {
+    border-left: 4px solid var(--border-color);
+    padding-left: 1rem;
+    margin-left: 0;
+    color: var(--text-light); /* Texto mais claro para citação */
+    font-style: italic;
+}
+.content-container ul:not(.toc),
 .content-container ol:not(.toc) {
-    list-style-type: decimal;
-    padding-left: 1.5rem; /* recuo reduzido */
+    list-style-position: outside;
+    margin: 1rem 0 1rem 1.5rem;
+    padding-left: 1rem; /* Ajuste de padding */
 }
-.content-container hr:not(.toc) {
+.content-container li {
+    margin-bottom: 0.5rem;
+}
+.content-container hr {
     border: none;
     height: 1px;
-    background-image: linear-gradient(to right, rgba(0,102,86,0), rgba(0,102,86,0.75), rgba(0,102,86,0));
-    margin: 1rem 0;
+    background-color: var(--border-color); /* Linha cinza */
+    margin: 2rem 0;
 }
-.content .markdown-content ul,
-.content .markdown-content ol {
-    list-style-position: outside;
-    margin: 1rem 0;
-    padding-left: 1.5rem; /* recuo reduzido */
-}
+
 /* Tabela de conteúdos */
-.toc {
-    position: sticky;
-    top: 2rem;
-    max-height: calc(100vh - 4rem);
+.toc-container { /* Mantido o nome, mas ajustando estilos */
+    width: 300px;
+    height: 100%;
+    background: #ffffff; /* Fundo branco */
+    border-left: 1px solid var(--border-color); /* Borda cinza */
     overflow-y: auto;
     padding: 1rem;
     border-radius: 8px;
-    background-color: #f8f9fa;
-    width: 300px; /* Largura fixa para garantir consistência */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    position: sticky; /* Adicionado para manter fixo */
+    top: 1rem;      /* Espaçamento do topo */
+    max-height: calc(100vh - 100px); /* Altura máxima considerando navbar e padding */
 }
-.toc-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #343a40;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #e9ecef;
-    position: sticky;
-    top: 0;
-    background: #f8f9fa;
-    z-index: 1;
+.toc-content { /* Container interno para permitir padding sem afetar sticky */
+     padding-top: 1rem;
 }
+
+/* Título TOC (removido, usamos nav direto) */
+/* .toc-title { ... } */
+
 .toc-nav {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    overflow-y: auto;
-    max-height: calc(100vh - 8rem); /* Ajuste para considerar o título e padding */
+    gap: 0.3rem; /* Espaçamento menor */
 }
 .toc-item {
     display: block;
-    padding: 0.5rem 0.75rem;
-    color: #495057;
+    padding: 0.4rem 0.75rem;
+    color: var(--text-light); /* Cinza médio */
     text-decoration: none;
-    border-radius: 6px;
+    border-radius: 4px;
     transition: all 0.2s ease;
     border-left: 3px solid transparent;
-    margin: 2px 0;
+    margin: 1px 0;
     line-height: 1.4;
     word-wrap: break-word;
+    font-size: 0.9rem; /* Tamanho ligeiramente menor */
 }
 .toc-item:hover {
-    background-color: #e9ecef;
-    color: #212529;
-    border-left-color: #adb5bd;
+    background-color: var(--background-light); /* Fundo cinza claro */
+    color: var(--primary-dark); /* Texto escuro */
+    border-left-color: var(--border-color); /* Borda cinza */
 }
 .toc-item.active {
-    background-color: #e7f5ff;
-    color: #1971c2;
-    border-left-color: #1971c2;
+    background-color: var(--accent-color); /* Fundo com cor de destaque */
+    color: #ffffff; /* Texto branco */
+    border-left-color: var(--accent-color); /* Borda com cor de destaque */
     font-weight: 500;
 }
-/* Níveis de indentação */
-.toc-item.h1 {
-    font-weight: 600;
-    margin-left: 0;
-}
-.toc-item.h2 {
-    margin-left: 1rem;
-    font-size: 0.95rem;
-}
-.toc-item.h3 {
-    margin-left: 2rem;
-    font-size: 0.9rem;
-    color: #666;
-}
-/* Estilização da barra de rolagem do TOC */
-.toc::-webkit-scrollbar {
-    width: 6px;
-}
-.toc::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 3px;
-}
-.toc::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 3px;
-}
-.toc::-webkit-scrollbar-thumb:hover {
-    background: #999;
-}
-/* Estilização dos botões de feedback */
+/* Níveis de indentação TOC */
+.toc-item.h1 { font-weight: 600; margin-left: 0; font-size: 0.95rem; }
+.toc-item.h2 { margin-left: 1rem; }
+.toc-item.h3 { margin-left: 2rem; color: var(--text-light); } /* Mesmo cinza médio, talvez mais claro? */
+
+/* Estilização da barra de rolagem do TOC (igual antes) */
+.toc-container::-webkit-scrollbar { width: 6px; }
+.toc-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 3px; }
+.toc-container::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+.toc-container::-webkit-scrollbar-thumb:hover { background: #999; }
+
+/* Botões de Feedback */
 .feedback-buttons {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
     margin-top: 2rem;
     padding-top: 1.5rem;
-    border-top: 1px solid #e0f2f0;
+    border-top: 1px solid var(--border-color); /* Borda cinza */
 }
-
 .feedback-btn {
-    background-color: #ffffff;
-    color: #006356;
-    border: 2px solid #00B29A;
+    background-color: var(--background-light); /* Fundo cinza claro */
+    color: var(--primary-color); /* Cor cinza média */
+    border: 1px solid var(--border-color); /* Borda cinza */
     border-radius: 50%;
-    width: 3rem;
-    height: 3rem;
-    font-size: 1.5rem;
+    width: 48px;
+    height: 48px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
-
-.like-btn:hover {
-    background-color: #e5f9f5;
-    transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0, 118, 108, 0.2);
-    border-color: #00E1C4;
+.feedback-btn svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2;
 }
-
-.dislike-btn:hover {
-    background-color: #e5f9f5;
-    transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0, 118, 108, 0.2);
-    border-color: #00E1C4;
+.feedback-btn:hover {
+    background-color: var(--background-medium); /* Cinza um pouco mais escuro */
+    color: var(--accent-color); /* Cor de destaque no hover */
+    border-color: var(--primary-light); /* Borda cinza clara */
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
 }
-
 .feedback-btn:active {
     transform: translateY(1px);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-/* Melhoria do modal de feedback */
+/* Modal de Feedback */
 .feedback-modal {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background: #ffffff;
-    box-shadow: 0 10px 25px rgba(0, 77, 64, 0.15);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
     border-radius: 12px;
     padding: 2.5rem;
     z-index: 1000;
     width: 90%;
     max-width: 500px;
-    border-top: 5px solid #00B29A;
+    border-top: 5px solid var(--primary-color); /* Borda superior cinza */
 }
-
-.feedback-modal-content {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.feedback-modal h3 {
-    font-size: 1.6rem;
-    color: #004D40;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-}
-
-.feedback-modal .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.feedback-modal .form-group label {
-    font-weight: 500;
-    color: #006356;
-}
-
+.feedback-modal-content { display: flex; flex-direction: column; gap: 1.5rem; }
+.feedback-modal h3 { font-size: 1.6rem; color: var(--primary-dark); margin-bottom: 0.5rem; font-weight: 600; }
+.feedback-modal .form-group { display: flex; flex-direction: column; gap: 0.75rem; }
+.feedback-modal .form-group label { font-weight: 500; color: var(--text-color); }
 .feedback-modal textarea {
-    resize: none;
+    resize: vertical; /* Permitir redimensionar verticalmente */
     padding: 1rem;
-    border: 2px solid #c4f7ef;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     font-size: 1rem;
     line-height: 1.6;
-    min-height: 120px;
-    transition: border-color 0.3s ease;
-    background-color: #f9fffd;
+    min-height: 100px; /* Altura mínima menor */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #ffffff; /* Fundo branco */
 }
-
 .feedback-modal textarea:focus {
     outline: none;
-    border-color: #00B29A;
-    box-shadow: 0 0 0 3px rgba(0, 178, 154, 0.1);
+    border-color: var(--accent-color); /* Cor de destaque no foco */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15); /* Sombra suave com cor de destaque */
 }
-
 .feedback-modal .close-modal {
     position: absolute;
     top: 15px;
     right: 15px;
     font-size: 1.5rem;
-    color: #004D40;
+    color: var(--text-light); /* Cinza médio */
     cursor: pointer;
     transition: color 0.2s ease;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
+    width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: none; border: none; padding: 0;
 }
-
 .feedback-modal .close-modal:hover {
-    color: #00E1C4;
-    background-color: #f0faf8;
+    color: var(--primary-dark); /* Mais escuro no hover */
+    background-color: var(--background-light);
 }
-
 .submit-feedback {
-    background-color: #00B29A;
+    background-color: var(--accent-color); /* Cor de destaque */
     color: white;
     border: none;
     border-radius: 8px;
@@ -469,82 +504,25 @@ p, h1, h2, h3, h4, h5, h6 {
     align-self: flex-start;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
-
 .submit-feedback:hover {
-    background-color: #00766C;
+    background-color: #0056b3; /* Azul um pouco mais escuro (ajuste se usar cinza) */
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
+.submit-feedback:active { transform: translateY(1px); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); }
 
-.submit-feedback:active {
-    transform: translateY(1px);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-/* Estilização dos botões de feedback - versão com ícones maiores */
-.feedback-buttons {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1.5rem;
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #e0f2f0;
-}
-
-.feedback-btn {
-    background-color: #f0faf8;
-    color: #00766C;
-    border: 1px solid #c4f7ef;
-    border-radius: 50%;
-    width: 48px;
-    height: 48px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-}
-
-.feedback-btn svg {
-    width: 24px;
-    height: 24px;
-    stroke-width: 2;
-}
-
-.like-btn:hover {
-    background-color: #e5f9f5;
-    color: #00B29A;
-    border-color: #00B29A;
-    box-shadow: 0 3px 8px rgba(0, 178, 154, 0.2);
-    transform: translateY(-2px);
-}
-
-.dislike-btn:hover {
-    background-color: #e5f9f5;
-    color: #00B29A;
-    border-color: #00B29A;
-    box-shadow: 0 3px 8px rgba(0, 178, 154, 0.2);
-    transform: translateY(-2px);
-}
-
-.feedback-btn:active {
-    transform: translateY(1px);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-/* Adicione um overlay para escurecer o fundo quando o modal estiver aberto */
+/* Overlay do Modal (compartilhado) */
 .modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 51, 46, 0.6);
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(33, 37, 41, 0.6); /* Cinza translúcido */
     z-index: 999;
     backdrop-filter: blur(2px);
+    display: none; /* Controlado via JS com .active */
 }
+.modal-overlay.active { display: block; }
+/* Classe para travar scroll do body */
+body.modal-open { overflow: hidden; }
 
 /* Tabelas */
 table {
@@ -554,112 +532,86 @@ table {
     font-size: 0.95rem;
     line-height: 1.5;
     background-color: #ffffff;
-    border: 1px solid #00B29A;
+    border: 1px solid var(--border-color); /* Borda cinza */
 }
 th, td {
     padding: 0.8rem;
     text-align: left;
-    border: 1px solid #00B29A;
+    border: 1px solid var(--border-color);
 }
 th {
-    background-color: #e5f9f5; /* Verde claro */
+    background-color: var(--background-light); /* Fundo cinza claro */
     font-weight: 600;
-    color: #004D40; /* Verde escuro */
+    color: var(--primary-dark); /* Texto escuro */
 }
 tr:nth-child(even) {
-    background-color: #f0faf8; /* Verde bem claro */
+    background-color: var(--background-light); /* Fundo alternado */
 }
 tr:hover {
-    background-color: #c4f7ef; /* Verde turquesa muito claro */
+    background-color: var(--background-medium); /* Fundo no hover */
 }
+
 /* Callout components */
 .callout {
     margin: 1.5rem 0;
     padding: 1.25rem;
     border-radius: 8px;
     border-left: 4px solid;
-    background-color: #f0faf8; /* Verde bem claro */
+    background-color: var(--background-light); /* Fundo padrão */
     position: relative;
     font-size: 0.95rem;
+    color: var(--text-color);
 }
-.callout::before {
-    position: absolute;
-    left: -2px;
-    top: -10px;
-    padding: 0 0.75rem;
-    font-weight: 600;
-    font-size: 0.85rem;
-    border-radius: 4px;
-    background-color: #ffffff;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.callout-title {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid;
 }
-/* Info callout - Azul */
+.callout-content {
+    padding-top: 0.5rem;
+}
+
+/* Info callout - Azul (usando cor de destaque) */
 .callout.info {
-    background-color: #e6f3ff;
-    border-left-color: #0066cc;
+    background-color: blue;
+    border-left-color: var(--accent-color);
+    border-bottom-color: #b3d7ff; /* Azul um pouco mais escuro */
 }
 .callout.info .callout-title {
-    color: #004d99;
-    font-weight: bold;
-    border-bottom: 1px solid #0066cc;
+    color: #0056b3; /* Azul escuro */
+    border-bottom-color: var(--accent-color);
 }
+
 /* Warning callout - Amarelo */
 .callout.warning {
-    background-color: #fff8e6;
-    border-left-color: #ffcc00;
+    background-color: #fff9e6; /* Amarelo bem claro */
+    border-left-color: #ffc107; /* Amarelo */
+    border-bottom-color: #ffeeba;
 }
 .callout.warning .callout-title {
-    color: #996600;
-    font-weight: bold;
-    border-bottom: 1px solid #ffcc00;
+    color: #856404; /* Amarelo escuro */
+    border-bottom-color: #ffc107;
 }
+
 /* Error callout - Vermelho */
 .callout.error {
-    background-color: #ffe6e6;
-    border-left-color: #cc0000;
+    background-color: #ffe6e6; /* Vermelho bem claro */
+    border-left-color: #dc3545; /* Vermelho */
+    border-bottom-color: #f5c6cb;
 }
 .callout.error .callout-title {
-    color: #990000;
-    font-weight: bold;
-    border-bottom: 1px solid #cc0000;
-}
-/* Add icons if desired */
-.callout.info::after,
-.callout.warning::after,
-.callout.error::after {
-    position: absolute;
-    right: 1rem;
-    top: 1rem;
-    font-size: 1.25rem;
-    opacity: 0.4;
-}
-.callout.info::after {
-    content: "ℹ️";
-}
-.callout.warning::after {
-    content: "⚠️";
-}
-.callout.error::after {
-    content: "⛔";
-}
-li::marker {
-    margin-right: 0.5rem;
-}
-/* Se o conteúdo markdown estiver num contêiner específico, ex.: .markdown-content */
-.markdown-content ul,
-.markdown-content ol {
-    list-style-position: outside;
-    margin: 1rem 0;
-    padding-left: 10rem;
+    color: #721c24; /* Vermelho escuro */
+    border-bottom-color: #dc3545;
 }
 
 /* Estilo para o botão de API */
 .api-btn {
     padding: 0.4rem 0.8rem;
-    border: 1px solid #00B29A;
+    border: 1px solid var(--navbar-border); /* Mesma borda dos dropdowns */
     border-radius: 6px;
-    background: #004D40;
-    color: #ffffff;
+    background: var(--primary-dark); /* Mesmo fundo dos dropdowns */
+    color: var(--navbar-text); /* Mesmo texto dos dropdowns */
     font-size: 0.875rem;
     cursor: pointer;
     text-decoration: none;
@@ -668,203 +620,111 @@ li::marker {
     transition: all 0.2s ease;
     height: fit-content;
 }
-
 .api-btn:hover {
-    background: #00594A;
-    border-color: #00E1C4;
+    background: var(--primary-color);
+    border-color: var(--primary-light);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
-
+/* Ícone do botão API - usando cor clara */
 .api-btn::before {
     content: '';
     display: inline-block;
-    width: 14px;
-    height: 14px;
+    width: 14px; height: 14px;
     margin-right: 6px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='16 18 22 12 16 6'%3E%3C/polyline%3E%3Cpolyline points='8 6 2 12 8 18'%3E%3C/polyline%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f8f9fa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='16 18 22 12 16 6'%3E%3C/polyline%3E%3Cpolyline points='8 6 2 12 8 18'%3E%3C/polyline%3E%3C/svg%3E");
     background-size: contain;
     background-repeat: no-repeat;
 }
 
-.company-logo {
-    height: auto;
-    max-height: 80px;
-    width: auto;
-    align-items: center;
-    display: block;
-    transition: opacity 0.2s ease;
-    object-fit: contain;
-    margin: auto;
-}
-
-.company-logo:hover {
-    opacity: 0.9;
-}
-
+/* Busca */
 .search-container {
     flex: 1;
     max-width: 500px;
-    margin: 0 auto; /* Centraliza o container de busca */
-    z-index: 1000;
+    margin: 0 1rem; /* Ajuste de margem */
+    position: relative; /* Para posicionar modal se necessário */
 }
-
 #searchInput {
     width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    padding: 10px 15px; /* Padding ajustado */
+    border: 1px solid var(--navbar-border); /* Borda cinza escura */
+    border-radius: 6px;
     font-size: 14px;
     outline: none;
     transition: all 0.3s ease;
-    background: white;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    background: var(--navbar-text); /* Fundo claro */
+    color: var(--navbar-bg); /* Texto escuro */
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
 }
-
+#searchInput::placeholder {
+    color: var(--text-light); /* Placeholder cinza médio */
+}
 #searchInput:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
 }
 
-#searchModalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.5);
-    backdrop-filter: blur(2px);
-    z-index: 1001;
-    display: none;
-}
-
-#searchModalOverlay.active {
-    display: block;
-}
-
+/* Modal de Busca */
 .search-modal {
     position: fixed;
-    top: 50%;
-    left: 50%;
+    top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    width: 90%;
-    max-width: 800px;
-    max-height: 80vh;
+    width: 90%; max-width: 700px; /* Pouco menor */
+    max-height: 75vh; /* Pouco menor */
     background: white;
     border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    display: none;
-    flex-direction: column;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+    display: none; flex-direction: column;
     z-index: 1002;
     overflow: hidden;
 }
-
-.search-modal.active {
-    display: flex;
-}
-
+.search-modal.active { display: flex; }
 .search-modal-header {
-    padding: 20px;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #f8f9fa;
+    padding: 15px 20px; /* Padding ajustado */
+    border-bottom: 1px solid var(--border-color);
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--background-light);
 }
+.search-modal-header h2 { margin: 0; font-size: 1.1rem; color: var(--primary-dark); border: none; padding: 0;} /* Remove borda do H2 */
+.search-results-count { color: var(--text-light); font-size: 0.9rem; }
+.close-search-modal { background: none; border: none; font-size: 1.5rem; color: var(--text-light); cursor: pointer; padding: 5px; line-height: 1; transition: color 0.2s; }
+.close-search-modal:hover { color: var(--primary-dark); }
 
-.search-modal-header h2 {
-    margin: 0;
-    font-size: 1.2rem;
-    color: #333;
-}
-
-.search-results-count {
-    color: #666;
-    font-size: 0.9rem;
-}
-
-.close-search-modal {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: #666;
-    cursor: pointer;
-    padding: 5px;
-    line-height: 1;
-    transition: color 0.2s;
-}
-
-.close-search-modal:hover {
-    color: #333;
-}
-
-.search-results {
-    flex: 1;
-    overflow-y: auto;
-    padding: 0;
-}
-
+.search-results { flex: 1; overflow-y: auto; padding: 0; }
 .search-result-item {
-    padding: 15px 20px;
-    border-bottom: 1px solid #eee;
+    padding: 12px 20px; /* Padding ajustado */
+    border-bottom: 1px solid var(--border-color);
     cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    transition: background-color 0.2s ease;
+    display: flex; flex-direction: column; gap: 5px; /* Espaçamento menor */
 }
-
-.search-result-item:last-child {
-    border-bottom: none;
+.search-result-item:last-child { border-bottom: none; }
+.search-result-item:hover, .search-result-item:focus { /* Adiciona foco */
+    background-color: var(--background-light);
+    outline: none;
 }
-
-.search-result-item:hover {
-    background-color: #f8f9fa;
+.search-result-item h3.result-title { /* Classe específica */
+    margin: 0; font-size: 1rem; color: var(--accent-color); font-weight: 600; border: none; padding: 0; /* Remove borda do H3 */
 }
-
-.search-result-item h3 {
-    margin: 0;
-    font-size: 1rem;
-    color: #333;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+.search-result-item p.result-path { /* Classe específica */
+    font-size: 0.8rem; color: var(--text-light); margin: 0 0 5px 0; /* Ajuste margem */
 }
-
-.search-result-item .result-path {
-    font-size: 0.8rem;
-    color: #666;
-    margin-left: 5px;
-}
-
 .search-result-item .snippet-container {
-    margin: 0;
-    font-size: 0.9rem;
-    color: #666;
-    line-height: 1.5;
-    background: #f8f9fa;
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #eee;
+    margin: 0; font-size: 0.9rem; color: var(--text-color); /* Texto padrão */
+    line-height: 1.5; background: none; padding: 0; border: none; /* Remove fundo/borda do snippet */
 }
-
 .search-result-item .highlight {
-    background-color: #fff3cd;
-    padding: 0 2px;
-    border-radius: 2px;
-    font-weight: 500;
+    background-color: #ffeeba; /* Amarelo claro para destaque */
+    padding: 0 2px; border-radius: 2px; font-weight: 500; color: #333;
 }
+/* Removido result-meta para simplificar */
+/* .search-result-item .result-meta { ... } */
 
-.search-result-item .result-meta {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.8rem;
-    color: #666;
+/* Mensagem de 'sem resultados' */
+.search-no-results {
+     padding: 20px;
+     text-align: center;
+     color: var(--text-light);
 }
-
-.search-result-item .result-meta span {
-    display: flex;
-    align-items: center;
-    gap: 4px;
+.search-no-results strong {
+     color: var(--text-color);
 }

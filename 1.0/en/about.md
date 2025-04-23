@@ -1,4 +1,4 @@
-# Project Documentation: *Doc as Code* Documentation System
+# About the nameless platform
 
 ## Overview
 
@@ -25,6 +25,8 @@ The need to maintain up-to-date and accessible documentation led to the creation
 
 The system architecture is intentionally simple, based on static files and client-side processing.
 
+![](/images/diagram.png)
+
 ### Directory Structure
 
 ```txt
@@ -43,6 +45,20 @@ docs-as-code/
 ├── index.html # Main page
 └── [markdown documents] # Documentation in .md format
 ```
+
+## Callouts
+
+:::(info) (Informação)
+Este é um callout informativo.
+:::
+
+:::(warning) (Aviso)
+Este é um callout de aviso.
+:::
+
+:::(error) (Erro)
+Este é um callout de erro.
+:::
 
 ## Front-end Components
 
@@ -409,3 +425,57 @@ function traverseDirectory(dir, callback) {
                 } else if (path.extname(file) === '.md') {
                     // If it's an .md file, executes the
 ```
+### Function to process a Markdown file
+
+```js
+function processMarkdownFile(filePath) {
+    fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+            console.error(`Erro ao ler o arquivo ${filePath}:`, err);
+            return;
+        }
+
+        // Padrão para encontrar blocos de metadados no início do arquivo
+        const metadataRegex = /^---\s*([\s\S]*?)\s*---\s*\n/g;
+
+        const metadataMatch = metadataRegex.exec(data);
+
+        if (metadataMatch && metadataMatch[1]) {
+            const metadataBlock = metadataMatch[1];
+            const lines = metadataBlock.split('\n');
+            let title = null;
+            for (let line of lines) {
+                if (line.startsWith('title:')) {
+                    title = line.substring('title:'.length).trim();
+                    break;
+                }
+            }
+
+            if (title) {
+                const newContent = data.replace(metadataRegex, `# ${title}\n\n`);
+                fs.writeFile(filePath, newContent, 'utf8', (err) => {
+                    if (err) {
+                        console.error(`Erro ao escrever no arquivo ${filePath}:`, err);
+                    } else {
+                        console.log(`Metadados processados e título adicionado em ${filePath}`);
+                    }
+                });
+            } else {
+                console.log(`Nenhum título encontrado em ${filePath}`);
+            }
+        } else {
+            console.log(`Nenhum bloco de metadados encontrado em ${filePath}`);
+        }
+    });
+}
+// Inicia o processo
+traverseDirectory(rootDirectory, processMarkdownFile);
+```
+
+## Conclusion
+
+This project represents a complete implementation of a technical documentation platform with a focus on “Documentation as Code”. It integrates version control, revision flows and publication automation. In addition, the simple architecture based on static files ensures that documentation is always accessible, keeping the platform lightweight and easy to maintain.
+
+This project was developed to demonstrate a technical documentation system that adopts modern practices and tools familiar to developers, and a great initial step towards a more robust project.
+
+The system implements a complete solution that meets the main objectives of any documentation team.

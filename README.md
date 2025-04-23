@@ -1,129 +1,122 @@
-# Plataforma de documentação técnica
-Este é o repostório da minha plataforma sem nome (ainda) para publicação de documentação técnica.
-Essa plataforma é um sistema de documentação interativa para a documentação de produtos. 
-Ela permite que os usuários naveguem por documentos organizados em uma barra lateral, alternem entre idiomas e versões, e interajam com conteúdos dinâmicos, como callouts e tabelas de conteúdo (TOC).
+# Plataforma Sem Nome 📄✨ (Sua Plataforma de Documentação Dinâmica)
 
-## Funcionalidades
+<p align="center">
+  <img src="images/ChatGPT Image 23 de abr. de 2025, 11_09_29.png" alt="Plataforma Sem Nome Logo" width="300"/>
+  </p>
 
-- **Barra lateral interativa**:
-  - Navegação por pastas e arquivos.
-  - Destaque automático do arquivo atual.
-  - Suporte a múltiplos níveis de hierarquia.
+<p align="center">
+  <em>Uma plataforma moderna e interativa para criar, gerenciar e publicar documentação técnica com a filosofia "Documentation as Code".</em>
+  <br/>
+  <a href="#-funcionalidades"><strong>Funcionalidades</strong></a> •
+  <a href="#-tecnologias"><strong>Tecnologias</strong></a> •
+  <a href="#%EF%B8%8F-como-rodar"><strong>Como Rodar</strong></a> •
+  <a href="#-estrutura-do-projeto"><strong>Estrutura</strong></a> •
+  <a href="#-contribuindo"><strong>Contribuindo</strong></a>
+</p>
 
-- **Callouts estilizados**:
-  - Suporte a mensagens de **info**, **warning** e **error** no Markdown.
-  - Renderização automática com estilos personalizados.
+---
 
-- **Tabela de conteúdo (TOC)**:
-  - Geração dinâmica com base nos headings do conteúdo.
-  - Destaque do heading atual com scroll spy.
+A **Plataforma Sem Nome** transforma o processo de documentação, permitindo que equipes técnicas produzam, revisem e publiquem conteúdo usando Markdown e fluxos de trabalho Git familiares. Crie documentações bonitas, responsivas e fáceis de navegar!
 
-- **Modo de feedback**:
-  - Botões de "like" e "dislike" com modal para envio de mensagens.
-  - Integração com um endpoint para coleta de feedback.
+## ✨ Funcionalidades Principais
 
-- **Suporte a múltiplos idiomas e versões**:
-  - Alternância entre idiomas e versões diretamente na interface.
-  - Carregamento dinâmico de documentos com base na seleção.
+* **Navegação Intuitiva:** Sidebar interativa gerada automaticamente a partir da estrutura de pastas, com destaque para o arquivo ativo e suporte a múltiplos níveis.
+* **Conteúdo Rico com Markdown:** Suporte completo a Markdown, processado dinamicamente no cliente com a biblioteca [Marked.js](https://marked.js.org/).
+* **Callouts Estilizados:** Destaque informações importantes, avisos ou erros usando uma sintaxe simples no Markdown (`:::info (Título) ... :::`) que é automaticamente renderizada com estilos customizáveis.
+* **Tabela de Conteúdo (TOC) Dinâmica:** Geração automática de TOC baseada nos cabeçalhos (H1, H2, H3) do documento atual, com scroll spy para indicar a seção ativa.
+* **Seleção de Versão e Idioma:** Permite aos usuários alternar facilmente entre diferentes versões e idiomas da documentação, carregando o conteúdo correspondente.
+* **Busca Integrada:** Funcionalidade de busca em tempo real (com debounce) no conteúdo pré-carregado da versão/idioma selecionado.
+* **Referência de API:** Página dedicada para exibir especificações OpenAPI (Swagger) usando [Redoc](https://github.com/Redocly/redoc).
+* **Feedback do Usuário:** Botões de "like/dislike" com modal para coletar feedback sobre a utilidade das páginas.
+* **Design Responsivo:** Interface adaptável para diferentes tamanhos de tela.
+* **"Documentation as Code":** Baseado em arquivos estáticos (HTML, CSS, JS, Markdown) e versionamento Git, facilitando a colaboração e a integração com CI/CD.
 
-## Configuração
+## 🚀 Tecnologias
 
-### Pré-requisitos
+* **Frontend:** HTML5, CSS3, JavaScript (Vanilla JS)
+* **Processamento Markdown:** [Marked.js](https://marked.js.org/)
+* **Visualização API:** [Redoc](https://github.com/Redocly/redoc)
+* **Tooling (Helper Scripts):** Node.js (para geração da estrutura de menu)
+* **Servidor (Desenvolvimento):** Qualquer servidor web estático (ex: `npx serve`, Live Server)
 
-- Um servidor web para servir os arquivos estáticos (ex.: [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) no VS Code).
-- Navegador moderno com suporte a ES6.
+## 🛠️ Como Rodar
 
-### Passos para rodar o projeto
+Siga estes passos para configurar e rodar o projeto localmente:
 
-1. Clone este repositório:
-   ```bash
-   git clone https://github.com/seu-usuario/segura-docs.git
-   cd segura-docs
-   ```
-2. Abra o projeto em um editor de texto ou IDE.
-3. Inicie um servidor local para servir os arquivos estáticos. Por exemplo: `npx serve` ou `npx live-server`
-4. Acesse o sistema de documentação no navegador: `http://127.0.0.1:5500`
+1.  **Clone o Repositório:**
+    ```bash
+    git clone <url-do-seu-repositorio>
+    cd <nome-da-pasta-do-projeto>
+    ```
 
-## Diagrama de fluxo da documentação (staging, escrita, commit, desenvolvimento).
+2.  **Instale as Dependências (para o script de menu):**
+    ```bash
+    npm install
+    ```
+    *(Isso instalará o `marked` necessário para o `cria_menu.js`)*
 
-![](https://github.com/gpilottiduarte/docs-as-code/blob/main/docascode.svg)
+3.  **Gere a Estrutura da Documentação:**
+    Execute o script Node.js para escanear seus arquivos `.md` e criar/atualizar o `structure.json`.
+    ```bash
+    node cria_menu.js
+    ```
+    *Verifique o console por erros e confirme se o `structure.json` foi gerado corretamente.*
 
-## Personalização
-### Estrutura da Barra Lateral
-A estrutura da barra lateral é definida no arquivo `structure.json`. 
+4.  **Inicie um Servidor Local:**
+    Navegue **para dentro** da pasta raiz do projeto (onde está o `index.html`) e use um servidor de sua preferência.
+    *Exemplo usando `serve` (instale com `npm install -g serve` se não tiver):*
+    ```bash
+    serve .
+    ```
+    *Ou use a extensão "Live Server" do VS Code.*
 
-#### Exemplo:
-```json
-{
-  "name": "4.0",
-  "type": "directory",
-  "children": [
-    {
-      "name": "en",
-      "type": "directory",
-      "children": [
-        {
-          "name": "Getting Started",
-          "type": "directory",
-          "children": [
-            {
-              "name": "Introduction.md",
-              "type": "file",
-              "path": "4.0/en/Getting Started/Introduction.md"
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
+5.  **Acesse no Navegador:**
+    Abra seu navegador e vá para o endereço fornecido pelo servidor (geralmente `http://localhost:3000`, `http://localhost:5000` ou `http://127.0.0.1:5500`).
+
+## 📁 Estrutura do Projeto
+
+```txt
+/
+├── api-specs/         # Arquivos de especificação OpenAPI (ex: openapi.yaml)
+├── css/
+│   └── styles.css     # Estilos principais
+├── images/            # Logos e outras imagens (coloque seu logo aqui!)
+├── js/
+│   └── script.js      # Lógica principal do frontend
+├── 1.0/               # Exemplo de pasta de versão
+│   ├── en/            # Exemplo de pasta de idioma
+│   │   └── about.md
+│   └── pt/
+│       └── sobre.md
+├── *.md               # Outros arquivos Markdown de documentação (organize por versão/idioma)
+├── api.html           # Página para visualização da API com Redoc
+├── cria_menu.js       # Script Node.js para gerar structure.json
+├── index.html         # Ponto de entrada principal da aplicação
+├── package.json       # Dependências do Node.js (para cria_menu.js)
+├── README.md          # Este arquivo :)
+└── structure.json     # Estrutura da documentação (gerado por cria_menu.js)
 ```
-### Estilos
-Os estilos globais estão definidos no arquivo styles.css. Você pode personalizar:
+## 🎨 Customização
 
-1. Cores da interface: Ajuste as variáveis CSS no :root.
-2. Callouts: Estilos para .callout-info, .callout-warning e .callout-error.
+* **Estrutura/Menu:** Adicione/remova arquivos `.md` e execute `node cria_menu.js` para atualizar a navegação.
+* **Aparência:** Modifique as variáveis CSS e estilos em `css/styles.css`.
+* **Comportamento:** Ajuste a lógica no `js/script.js`.
+* **Logo:** Substitua a imagem em `images/` e atualize o caminho no `index.html`.
 
-### Callouts no Markdown
-Os callouts são definidos no Markdown usando o seguinte formato:
+## 🙌 Contribuindo
 
-```
-:::info (Informação)
-Este é um callout informativo.
-:::
+Contribuições são bem-vindas! Se você tem sugestões ou quer corrigir algo:
 
-:::warning (Aviso)
-Este é um callout de aviso.
-:::
+1.  Faça um Fork do projeto.
+2.  Crie uma Branch para sua modificação (`git checkout -b feature/nova-feature` ou `fix/corrige-bug`).
+3.  Faça Commit das suas alterações (`git commit -m 'Adiciona nova feature X'`).
+4.  Faça Push para a Branch (`git push origin feature/nova-feature`).
+5.  Abra um Pull Request.
 
-:::error (Erro)
-Este é um callout de erro.
-:::
-```
+## 📜 Licença
 
-## Deploy com GitHub Pages
-Este projeto utiliza o GitHub Actions para realizar o deploy automático no GitHub Pages. O arquivo de workflow está localizado em `.github/workflows/gh-pages.yml`.
+GPL V4.
 
-### Configuração do Workflow
-1. Certifique-se de que o branch main está configurado como padrão.
-2. O workflow será acionado automaticamente ao realizar um push no branch main.
-3. O conteúdo será publicado no GitHub Pages a partir do diretório raiz (./).
+---
 
-## Problemas Conhecidos
-
-### Elementos cortados na barra lateral
-Quando há muitos níveis de hierarquia, alguns itens podem ser cortados. Certifique-se de que o CSS da barra lateral (.sidebar) tenha overflow-y: auto.
-
-### Callouts não renderizados corretamente
-Verifique se a função preProcessCallouts está sendo chamada antes da renderização do Markdown.
-
-## Contribuição
-1. Faça um fork do repositório.
-2. Crie uma branch para sua feature ou correção com o comando `git checkout -b minha-feature`.
-3. Faça commit das suas alterações com o comando `git commit -m "Adiciona minha feature"`.
-4. Envie para o repositório remoto com o comando `git push origin minha-feature`.
-5. Abra um Pull Request.
-
-## Licença
-
-## Contato
+*Desenvolvido com ❤️ por [aulo Guilherme*

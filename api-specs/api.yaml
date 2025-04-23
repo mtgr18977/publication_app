@@ -1,0 +1,179 @@
+openapi: 3.0.3
+info:
+  title: API Segura Docs (Exemplo)
+  description: |-
+    API de exemplo para gerenciar documentos técnicos na plataforma Sem Nome.
+    *Esta é uma API fictícia para demonstração.*
+  version: 1.0.0 # Ou a versão que você quer exibir, ex: 4.0.0
+servers:
+  - url: https://api.exemplo.docs/v1 # URL base da sua API (fictícia)
+tags:
+  - name: Documentos
+    description: Operações relacionadas a documentos técnicos
+paths:
+  /documents:
+    get:
+      tags:
+        - Documentos
+      summary: Lista todos os documentos
+      description: Retorna uma lista paginada de documentos disponíveis.
+      operationId: listDocuments
+      parameters:
+        - name: limit
+          in: query
+          description: Quantos itens retornar por página
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          description: A partir de qual item iniciar (para paginação)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Uma lista de documentos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DocumentSummary'
+        '400':
+          description: Parâmetros inválidos
+    post:
+      tags:
+        - Documentos
+      summary: Cria um novo documento
+      description: Adiciona um novo documento técnico à plataforma.
+      operationId: createDocument
+      requestBody:
+        description: Objeto do documento a ser adicionado
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewDocument'
+      responses:
+        '201':
+          description: Documento criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        '400':
+          description: Input inválido
+
+  /documents/{documentId}:
+    get:
+      tags:
+        - Documentos
+      summary: Busca um documento pelo ID
+      description: Retorna os detalhes de um documento específico.
+      operationId: getDocumentById
+      parameters:
+        - name: documentId
+          in: path
+          description: ID do documento a ser retornado
+          required: true
+          schema:
+            type: string # Ou integer, dependendo do seu ID
+            example: doc-abc-123
+      responses:
+        '200':
+          description: Detalhes do documento
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        '404':
+          description: Documento não encontrado
+
+components:
+  schemas:
+    DocumentSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID único do documento
+          example: doc-abc-123
+        title:
+          type: string
+          description: Título do documento
+          example: Introdução à API v1
+        version:
+          type: string
+          description: Versão do documento
+          example: "1.0"
+        language:
+          type: string
+          description: Idioma do documento (ISO code)
+          example: "pt-BR"
+
+    Document:
+      type: object
+      required:
+        - id
+        - title
+        - content
+        - version
+        - language
+      properties:
+        id:
+          type: string
+          example: doc-abc-123
+        title:
+          type: string
+          example: Introdução à API v1
+        content:
+          type: string
+          format: markdown # Indica que o conteúdo é Markdown
+          description: Conteúdo completo do documento em formato Markdown.
+          example: "# Introdução\n\nBem-vindo à documentação..."
+        version:
+          type: string
+          example: "1.0"
+        language:
+          type: string
+          example: "pt-BR"
+        createdAt:
+          type: string
+          format: date-time
+          description: Data e hora de criação
+          readOnly: true # O cliente não envia isso
+        updatedAt:
+          type: string
+          format: date-time
+          description: Data e hora da última atualização
+          readOnly: true
+
+    NewDocument:
+      type: object
+      required:
+        - title
+        - content
+        - version
+        - language
+      properties:
+        title:
+          type: string
+          example: Guia de Instalação
+        content:
+          type: string
+          format: markdown
+          example: "## Instalação\n\nSiga os passos..."
+        version:
+          type: string
+          example: "1.0"
+        language:
+          type: string
+          example: "pt-BR"

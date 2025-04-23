@@ -44,7 +44,24 @@ docs-as-code/
 └── [documentos markdown]               # Documentação em formato .md
 ```
 
-## Componentes Front-end em HTML (`index.html`)
+## Caixas de atenção
+
+:::(info) (Informação)
+Este é um callout informativo.
+:::
+
+:::(warning) (Aviso)
+Este é um callout de aviso.
+:::
+
+:::(error) (Erro)
+Este é um callout de erro.
+:::
+
+
+## Componentes Front-end 
+
+### HTML (`index.html`)
 O arquivo `index.html` serve como ponto de entrada da aplicação, com uma estrutura de single-page application:
 ```html
 <!DOCTYPE html>
@@ -83,7 +100,7 @@ O arquivo `index.html` serve como ponto de entrada da aplicação, com uma estru
 </html>
 ```
 
-## CSS (`styles.css`)
+### CSS (`styles.css`)
 O CSS foi desenvolvido com foco em legibilidade e responsividade, usando um sistema de cores baseado em tons de verde para identidade visual:
 
 ```css
@@ -172,7 +189,7 @@ header {
 }
 ```
 
-JavaScript (`script.js`)
+### JavaScript (`script.js`)
 O arquivo principal de JavaScript gerencia o carregamento de conteúdo, interações do usuário e processamento de Markdown:
 
 ```js
@@ -422,3 +439,65 @@ function traverseDirectory(dir, callback) {
                     traverseDirectory(filePath, callback);
                 } else if (path.extname(file) === '.md') {
 ```
+
+                    // Se for um arquivo Markdown, executa o callback
+                    callback(filePath);
+                }
+            });
+        });
+    });
+}
+
+### Função para processar um arquivo Markdown
+```js
+function processMarkdownFile(filePath) {
+    fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+            console.error(`Erro ao ler o arquivo ${filePath}:`, err);
+            return;
+        }
+
+        // Padrão para encontrar blocos de metadados no início do arquivo
+        const metadataRegex = /^---\s*([\s\S]*?)\s*---\s*\n/g;
+
+        const metadataMatch = metadataRegex.exec(data);
+
+        if (metadataMatch && metadataMatch[1]) {
+            const metadataBlock = metadataMatch[1];
+            const lines = metadataBlock.split('\n');
+            let title = null;
+            for (let line of lines) {
+                if (line.startsWith('title:')) {
+                    title = line.substring('title:'.length).trim();
+                    break;
+                }
+            }
+
+            if (title) {
+                const newContent = data.replace(metadataRegex, `# ${title}\n\n`);
+                fs.writeFile(filePath, newContent, 'utf8', (err) => {
+                    if (err) {
+                        console.error(`Erro ao escrever no arquivo ${filePath}:`, err);
+                    } else {
+                        console.log(`Metadados processados e título adicionado em ${filePath}`);
+                    }
+                });
+            } else {
+                console.log(`Nenhum título encontrado em ${filePath}`);
+            }
+        } else {
+            console.log(`Nenhum bloco de metadados encontrado em ${filePath}`);
+        }
+    });
+}
+// Inicia o processo
+traverseDirectory(rootDirectory, processMarkdownFile);
+```
+
+## Conclusão
+
+Este projeto representa uma implementação completa de uma plataforma de documentação técnica com foco em "Documentation as Code". Ele integra controle de versão, fluxos de revisão, e automação de publicação. Além disso, a arquitetura simples baseada em arquivos estáticos garante que a documentação esteja sempre acessível, mantendo a plataforma leve e de fácil manutenção.
+
+Este projeto foi desenvolvido para demonstrar um sistema de documentação técnica que adota práticas modernas e ferramentas familiares para desenvolvedores, e um ótimo passo inicial para um projeto mais robusto.
+
+O sistema implementa uma solução completa que atende aos principais objetivos de qualquer equipe de documentação.

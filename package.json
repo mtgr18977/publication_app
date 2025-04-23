@@ -4,8 +4,13 @@
   "description": "A technical documentation platform made in node.",
   "main": "cria_menu.js",
   "scripts": {
+    "start": "node cria_menu.js && npx serve",
+    "build-structure": "node cria_menu.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "marked": "^4.0.0"
+  }
 }
