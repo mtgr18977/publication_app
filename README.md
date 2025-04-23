@@ -1,5 +1,7 @@
-# Plataforma Sem Nome 📄✨ 
-## Sua plataforma de documentação selfmade (quase) :D
+<p align="center">
+  <h1>Plataforma Sem Nome 📄✨</h1>
+  <h2>Sua plataforma de documentação selfmade (quase) :D</h2>
+</p>
 
 <p align="center">
   <em>Uma plataforma moderna e interativa para criar, gerenciar e publicar documentação técnica com a filosofia "Documentation as Code".</em>
